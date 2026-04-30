@@ -21,7 +21,7 @@ export default function Index({ summary, mostBorrowedBooks, categoryCounts, over
                 <StatCard label="Total Denda" value={formatCurrency(summary.totalFine)} icon="bi-cash-coin" variant="warning" />
             </div>
 
-            <div className="mt-6 grid gap-6 xl:grid-cols-2">
+            <div className="mt-6 grid gap-3 xl:grid-cols-2">
                 <Table title="Buku Terpopuler" subtitle="Berdasarkan jumlah transaksi">
                     <table className="min-w-full divide-y divide-white/10">
                         <thead className="bg-white/5">

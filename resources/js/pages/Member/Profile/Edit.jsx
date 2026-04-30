@@ -2,6 +2,7 @@ import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import MemberLayout from '../../../Layouts/MemberLayout';
 import Card from '../../../Components/Card';
+import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Button from '../../../Components/Button';
 import Badge from '../../../Components/Badge';
@@ -26,18 +27,20 @@ export default function Edit({ user }) {
         >
             <Head title="Profile" />
 
-            <div className="grid gap-3 xl:grid-cols-[0.8fr_1.2fr]">
-                <Card style={{ backgroundColor: '#1f2937' }} className="border-none">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Account</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-slate-50">{user.name}</h2>
-                    <p className="mt-2 text-sm text-slate-400">{user.email}</p>
-                    <div className="mt-6">
-                        <Badge variant="primary">{user.role}</Badge>
+            <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
+                <Card className="border-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)' }}>
+                    <div className="p-4 p-lg-5 text-white">
+                        <p className="text-xs uppercase tracking-[0.2em] text-white-50 mb-2">Account</p>
+                        <h2 className="mt-2 text-2xl fw-bold mb-2">{user.name}</h2>
+                        <p className="mt-2 text-sm text-white-50 mb-0">{user.email}</p>
+                        <div className="mt-4">
+                            <Badge variant="primary">{user.role}</Badge>
+                        </div>
                     </div>
                 </Card>
 
-                <Card>
-                    <form onSubmit={submit} className="space-y-4">
+                <FormCard title="Update Profile" subtitle="Perbarui identitas akun member.">
+                    <form onSubmit={submit} className="d-grid gap-3">
                         <Input
                             label="Nama"
                             value={form.data.name}
@@ -56,7 +59,7 @@ export default function Edit({ user }) {
                             {form.processing ? 'Saving...' : 'Save Changes'}
                         </Button>
                     </form>
-                </Card>
+                </FormCard>
             </div>
         </MemberLayout>
     );

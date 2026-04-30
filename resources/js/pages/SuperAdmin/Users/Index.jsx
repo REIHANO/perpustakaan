@@ -3,6 +3,7 @@ import { Head, useForm, router, usePage } from '@inertiajs/react';
 import { Card, Row, Col } from '@themesberg/react-bootstrap';
 import SuperAdminLayout from '../../../Layouts/SuperAdminLayout';
 import Button from '../../../Components/Button';
+import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Select from '../../../Components/Select';
 import Table from '../../../Components/Table';
@@ -56,27 +57,21 @@ export default function Index({ users, roles }) {
             <Row className="g-4">
                 {canManageUsers ? (
                     <Col xl={4}>
-                        <Card className="border-0 shadow-sm">
-                            <Card.Header className="bg-white border-bottom">
-                                <h5 className="mb-1">Tambah User</h5>
-                                <p className="mb-0 text-muted">Buat user baru dan tentukan role awal.</p>
-                            </Card.Header>
-                            <Card.Body>
-                                <form onSubmit={submitCreate} className="d-grid gap-3">
-                                    <Input label="Nama" value={form.data.name} onChange={(e) => form.setData('name', e.target.value)} error={form.errors.name} />
-                                    <Input label="Email" type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)} error={form.errors.email} />
-                                    <Input label="Password" type="password" value={form.data.password} onChange={(e) => form.setData('password', e.target.value)} error={form.errors.password} />
-                                    <Select label="Role" value={form.data.role} onChange={(e) => form.setData('role', e.target.value)} error={form.errors.role}>
-                                        {roles.map((role) => (
-                                            <option key={role.slug} value={role.slug}>{role.name}</option>
-                                        ))}
-                                    </Select>
-                                    <Button type="submit" disabled={form.processing} className="w-100">
-                                        Simpan
-                                    </Button>
-                                </form>
-                            </Card.Body>
-                        </Card>
+                        <FormCard title="Tambah User" subtitle="Buat user baru dan tentukan role awal.">
+                            <form onSubmit={submitCreate} className="d-grid gap-3">
+                                <Input label="Nama" value={form.data.name} onChange={(e) => form.setData('name', e.target.value)} error={form.errors.name} />
+                                <Input label="Email" type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)} error={form.errors.email} />
+                                <Input label="Password" type="password" value={form.data.password} onChange={(e) => form.setData('password', e.target.value)} error={form.errors.password} />
+                                <Select label="Role" value={form.data.role} onChange={(e) => form.setData('role', e.target.value)} error={form.errors.role}>
+                                    {roles.map((role) => (
+                                        <option key={role.slug} value={role.slug}>{role.name}</option>
+                                    ))}
+                                </Select>
+                                <Button type="submit" disabled={form.processing} className="w-100">
+                                    Simpan
+                                </Button>
+                            </form>
+                        </FormCard>
                     </Col>
                 ) : null}
 
@@ -136,27 +131,21 @@ export default function Index({ users, roles }) {
                     </Table>
 
                     {canManageUsers ? (
-                        <Card className="border-0 shadow-sm mt-4">
-                            <Card.Header className="bg-white border-bottom">
-                                <h5 className="mb-1">Update User</h5>
-                                <p className="mb-0 text-muted">Pilih user dari tabel lalu perbarui datanya di sini.</p>
-                            </Card.Header>
-                            <Card.Body>
-                                <form onSubmit={submitUpdate} className="d-grid gap-3">
-                                    <Input label="Nama" value={updateForm.data.name} onChange={(e) => updateForm.setData('name', e.target.value)} error={updateForm.errors.name} />
-                                    <Input label="Email" type="email" value={updateForm.data.email} onChange={(e) => updateForm.setData('email', e.target.value)} error={updateForm.errors.email} />
-                                    <Input label="Password Baru" type="password" value={updateForm.data.password} onChange={(e) => updateForm.setData('password', e.target.value)} error={updateForm.errors.password} />
-                                    <Select label="Role" value={updateForm.data.role} onChange={(e) => updateForm.setData('role', e.target.value)} error={updateForm.errors.role}>
-                                        {roles.map((role) => (
-                                            <option key={role.slug} value={role.slug}>{role.name}</option>
-                                        ))}
-                                    </Select>
-                                    <Button type="submit" disabled={updateForm.processing || !updateForm.data.id}>
-                                        Update
-                                    </Button>
-                                </form>
-                            </Card.Body>
-                        </Card>
+                        <FormCard className="mt-4" title="Update User" subtitle="Pilih user dari tabel lalu perbarui datanya di sini.">
+                            <form onSubmit={submitUpdate} className="d-grid gap-3">
+                                <Input label="Nama" value={updateForm.data.name} onChange={(e) => updateForm.setData('name', e.target.value)} error={updateForm.errors.name} />
+                                <Input label="Email" type="email" value={updateForm.data.email} onChange={(e) => updateForm.setData('email', e.target.value)} error={updateForm.errors.email} />
+                                <Input label="Password Baru" type="password" value={updateForm.data.password} onChange={(e) => updateForm.setData('password', e.target.value)} error={updateForm.errors.password} />
+                                <Select label="Role" value={updateForm.data.role} onChange={(e) => updateForm.setData('role', e.target.value)} error={updateForm.errors.role}>
+                                    {roles.map((role) => (
+                                        <option key={role.slug} value={role.slug}>{role.name}</option>
+                                    ))}
+                                </Select>
+                                <Button type="submit" disabled={updateForm.processing || !updateForm.data.id}>
+                                    Update
+                                </Button>
+                            </form>
+                        </FormCard>
                     ) : null}
                 </Col>
             </Row>

@@ -3,6 +3,7 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 import Card from '../../../Components/Card';
 import Button from '../../../Components/Button';
+import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Select from '../../../Components/Select';
 import Table from '../../../Components/Table';
@@ -118,18 +119,12 @@ export default function Index({ books, categories }) {
         >
             <Head title="Admin Books" />
 
-            <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+            <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr] items-start">
                 {canManageBooks ? (
-                    <Card>
-                        <div className="mb-5">
-                            <p className="text-sm uppercase tracking-[0.2em] text-muted">
-                                {editingBook ? 'Edit Book' : 'New Book'}
-                            </p>
-                            <h2 className="mt-2 h4 mb-0 text-dark">
-                                {editingBook ? 'Ubah buku' : 'Tambah buku'}
-                            </h2>
-                        </div>
-
+                    <FormCard
+                        title={editingBook ? 'Ubah buku' : 'Tambah buku'}
+                        subtitle="CRUD buku terhubung ke kategori, stok, dan cover."
+                    >
                         <form onSubmit={submit} className="d-grid gap-3">
                             <Select
                                 label="Kategori"
@@ -209,7 +204,7 @@ export default function Index({ books, categories }) {
                                 </Button>
                             </div>
                         </form>
-                    </Card>
+                    </FormCard>
                 ) : null}
 
                 <Table title="Daftar Buku" subtitle={`${formatNumber(books.length)} buku tersimpan`}>

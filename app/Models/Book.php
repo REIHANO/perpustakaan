@@ -51,6 +51,6 @@ class Book extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->cover);
+       return asset('storage/' . $this->cover);
     }
 }

@@ -3,6 +3,7 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 import Card from '../../../Components/Card';
 import Button from '../../../Components/Button';
+import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
@@ -56,16 +57,10 @@ export default function Index({ categories }) {
 
             <div className="grid gap-3 xl:grid-cols-[0.5fr_1.15fr]">
                 {canManageCategories ? (
-                    <Card>
-                        <div className="mb-5">
-                            <p className="text-sm uppercase tracking-[0.2em] text-muted">
-                                {editingCategory ? 'Edit Category' : 'New Category'}
-                            </p>
-                            <h2 className="mt-2 h4 mb-0 text-dark">
-                                {editingCategory ? 'Ubah kategori' : 'Buat kategori'}
-                            </h2>
-                        </div>
-
+                    <FormCard
+                        title={editingCategory ? 'Ubah kategori' : 'Buat kategori'}
+                        subtitle="Kelola kategori buku dan relasi katalog secara cepat."
+                    >
                         <form onSubmit={submit} className="d-grid gap-3">
                             <Input
                                 label="Nama"
@@ -91,7 +86,7 @@ export default function Index({ categories }) {
                                 </Button>
                             </div>
                         </form>
-                    </Card>
+                    </FormCard>
                 ) : null}
 
                 <Table title="Daftar Kategori" subtitle={`${formatNumber(categories.length)} kategori aktif`}>

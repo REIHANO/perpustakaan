@@ -3,6 +3,7 @@ import { Head, useForm, router } from '@inertiajs/react';
 import { Card, Row, Col, Form } from '@themesberg/react-bootstrap';
 import SuperAdminLayout from '../../../Layouts/SuperAdminLayout';
 import Button from '../../../Components/Button';
+import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
@@ -26,11 +27,11 @@ function RolePermissionCard({ role, permissions, selectedIds }) {
 
     return (
         <Card className="border-0 shadow-sm h-100">
-            <Card.Header className="bg-white border-bottom">
+            <Card.Header className="bg-white border-bottom p-4 p-lg-5">
                 <h5 className="mb-1 text-capitalize">{role}</h5>
                 <p className="mb-0 text-muted">Atur permission untuk role ini.</p>
             </Card.Header>
-            <Card.Body>
+            <Card.Body className="p-4 p-lg-5">
                 <form onSubmit={submit} className="d-grid gap-3">
                     <div className="d-grid gap-2">
                         <div className="rounded-3 border bg-light p-3">
@@ -111,22 +112,16 @@ export default function Index({ permissions, roles, rolePermissions }) {
 
             <Row className="g-4">
                 <Col xl={4}>
-                    <Card className="border-0 shadow-sm">
-                        <Card.Header className="bg-white border-bottom">
-                            <h5 className="mb-1">Tambah Permission</h5>
-                            <p className="mb-0 text-muted">Buat permission baru untuk dipakai role.</p>
-                        </Card.Header>
-                        <Card.Body>
-                            <form onSubmit={submitCreate} className="d-grid gap-3">
-                                <Input label="Nama" value={createForm.data.name} onChange={(e) => createForm.setData('name', e.target.value)} error={createForm.errors.name} />
-                                <Input label="Slug" value={createForm.data.slug} onChange={(e) => createForm.setData('slug', e.target.value)} error={createForm.errors.slug} />
-                                <Input label="Deskripsi" value={createForm.data.description} onChange={(e) => createForm.setData('description', e.target.value)} error={createForm.errors.description} />
-                                <Button type="submit" disabled={createForm.processing}>
-                                    Simpan
-                                </Button>
-                            </form>
-                        </Card.Body>
-                    </Card>
+                    <FormCard title="Tambah Permission" subtitle="Buat permission baru untuk dipakai role.">
+                        <form onSubmit={submitCreate} className="d-grid gap-3">
+                            <Input label="Nama" value={createForm.data.name} onChange={(e) => createForm.setData('name', e.target.value)} error={createForm.errors.name} />
+                            <Input label="Slug" value={createForm.data.slug} onChange={(e) => createForm.setData('slug', e.target.value)} error={createForm.errors.slug} />
+                            <Input label="Deskripsi" value={createForm.data.description} onChange={(e) => createForm.setData('description', e.target.value)} error={createForm.errors.description} />
+                            <Button type="submit" disabled={createForm.processing}>
+                                Simpan
+                            </Button>
+                        </form>
+                    </FormCard>
                 </Col>
 
                 <Col xl={8}>

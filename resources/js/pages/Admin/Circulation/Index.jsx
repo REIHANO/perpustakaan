@@ -3,6 +3,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 import Card from '../../../Components/Card';
 import Button from '../../../Components/Button';
+import FormCard from '../../../Components/FormCard';
 import Select from '../../../Components/Select';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
@@ -44,22 +45,30 @@ export default function Index({ members, books, borrowings, canSetFine }) {
         >
             <Head title="Admin Circulation" />
 
-            <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
-                <Badge variant="info">Manage Circulation</Badge>
-                {canSetFine ? (
-                    <Badge variant="success">Set Fine Enabled</Badge>
-                ) : (
-                    <Badge variant="neutral">Set Fine Disabled</Badge>
-                )}
+            <div className="rounded-4 border bg-white shadow-sm p-4 mb-4">
+                <div className="d-flex flex-wrap align-items-start justify-content-between gap-3">
+                    <div>
+                        <p className="text-sm uppercase tracking-[0.2em] text-muted mb-2">Circulation Overview</p>
+                        <h2 className="h4 mb-2 text-dark">Peminjaman, pengembalian, dan denda</h2>
+                        <p className="mb-0 text-muted">Gunakan halaman ini untuk memproses transaksi manual dari sisi admin.</p>
+                    </div>
+                    <div className="d-flex flex-wrap align-items-center gap-2">
+                        <Badge variant="info">Manage Circulation</Badge>
+                        {canSetFine ? (
+                            <Badge variant="success">Set Fine Enabled</Badge>
+                        ) : (
+                            <Badge variant="neutral">Set Fine Disabled</Badge>
+                        )}
+                    </div>
+                </div>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-                <Card>
-                    <div className="mb-5">
-                        <p className="text-sm uppercase tracking-[0.2em] text-muted">Create Borrowing</p>
-                        <h2 className="mt-2 h4 mb-0 text-dark">Peminjaman manual</h2>
-                    </div>
-
+                <FormCard
+                    className="h-100"
+                    title="Peminjaman manual"
+                    subtitle="Proses transaksi peminjaman dari admin."
+                >
                     <form onSubmit={submit} className="d-grid gap-3">
                         <Select
                             label="Member"
@@ -93,7 +102,7 @@ export default function Index({ members, books, borrowings, canSetFine }) {
                             Proses Peminjaman
                         </Button>
                     </form>
-                </Card>
+                </FormCard>
 
                 <Table title="Transaksi Terbaru" subtitle="Peminjaman yang sedang berjalan maupun selesai">
                     <table className="table table-hover align-middle mb-0">

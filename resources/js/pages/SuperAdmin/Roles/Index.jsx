@@ -3,6 +3,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { Card, Row, Col, Form } from '@themesberg/react-bootstrap';
 import SuperAdminLayout from '../../../Layouts/SuperAdminLayout';
 import Button from '../../../Components/Button';
+import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
@@ -163,45 +164,39 @@ export default function Index({ roles, permissions }) {
 
             <Row className="g-4">
                 <Col xl={4}>
-                    <Card className="border-0 shadow-sm">
-                        <Card.Header className="bg-white border-bottom">
-                            <h5 className="mb-1">Tambah Role Baru</h5>
-                            <p className="mb-0 text-muted">Buat role custom berdasarkan permission.</p>
-                        </Card.Header>
-                        <Card.Body>
-                            <form onSubmit={submitCreate} className="d-grid gap-3">
-                                <Input
-                                    label="Nama Role"
-                                    value={createForm.data.name}
-                                    onChange={(e) => createForm.setData('name', e.target.value)}
-                                    error={createForm.errors.name}
-                                />
-                                <Input
-                                    label="Slug Role"
-                                    value={createForm.data.slug}
-                                    onChange={(e) => createForm.setData('slug', e.target.value)}
-                                    error={createForm.errors.slug}
-                                    placeholder="opsional, otomatis dari nama"
-                                />
-                                <Input
-                                    label="Deskripsi"
-                                    value={createForm.data.description}
-                                    onChange={(e) => createForm.setData('description', e.target.value)}
-                                    error={createForm.errors.description}
-                                />
+                    <FormCard title="Tambah Role Baru" subtitle="Buat role custom berdasarkan permission.">
+                        <form onSubmit={submitCreate} className="d-grid gap-3">
+                            <Input
+                                label="Nama Role"
+                                value={createForm.data.name}
+                                onChange={(e) => createForm.setData('name', e.target.value)}
+                                error={createForm.errors.name}
+                            />
+                            <Input
+                                label="Slug Role"
+                                value={createForm.data.slug}
+                                onChange={(e) => createForm.setData('slug', e.target.value)}
+                                error={createForm.errors.slug}
+                                placeholder="opsional, otomatis dari nama"
+                            />
+                            <Input
+                                label="Deskripsi"
+                                value={createForm.data.description}
+                                onChange={(e) => createForm.setData('description', e.target.value)}
+                                error={createForm.errors.description}
+                            />
 
-                                {renderPermissionChecks(
-                                    createForm,
-                                    (ids) => createForm.setData('permission_ids', ids),
-                                    'create',
-                                )}
+                            {renderPermissionChecks(
+                                createForm,
+                                (ids) => createForm.setData('permission_ids', ids),
+                                'create',
+                            )}
 
-                                <Button type="submit" disabled={createForm.processing}>
-                                    Simpan Role
-                                </Button>
-                            </form>
-                        </Card.Body>
-                    </Card>
+                            <Button type="submit" disabled={createForm.processing}>
+                                Simpan Role
+                            </Button>
+                        </form>
+                    </FormCard>
                 </Col>
 
                 <Col xl={8}>
@@ -267,50 +262,44 @@ export default function Index({ roles, permissions }) {
             </Row>
 
             {editingRole ? (
-                <Card className="border-0 shadow-sm mt-4">
-                    <Card.Header className="bg-white border-bottom">
-                        <h5 className="mb-1">Edit Role</h5>
-                        <p className="mb-0 text-muted">Nama dan permission bisa diperbarui tanpa mengubah slug.</p>
-                    </Card.Header>
-                    <Card.Body>
-                        <form onSubmit={submitUpdate} className="d-grid gap-3">
-                            <Input
-                                label="Nama Role"
-                                value={editForm.data.name}
-                                onChange={(e) => editForm.setData('name', e.target.value)}
-                                error={editForm.errors.name}
-                            />
-                            <Input
-                                label="Deskripsi"
-                                value={editForm.data.description}
-                                onChange={(e) => editForm.setData('description', e.target.value)}
-                                error={editForm.errors.description}
-                            />
+                <FormCard className="mt-4" title="Edit Role" subtitle="Nama dan permission bisa diperbarui tanpa mengubah slug.">
+                    <form onSubmit={submitUpdate} className="d-grid gap-3">
+                        <Input
+                            label="Nama Role"
+                            value={editForm.data.name}
+                            onChange={(e) => editForm.setData('name', e.target.value)}
+                            error={editForm.errors.name}
+                        />
+                        <Input
+                            label="Deskripsi"
+                            value={editForm.data.description}
+                            onChange={(e) => editForm.setData('description', e.target.value)}
+                            error={editForm.errors.description}
+                        />
 
-                            {renderPermissionChecks(
-                                editForm,
-                                (ids) => editForm.setData('permission_ids', ids),
-                                'edit',
-                            )}
+                        {renderPermissionChecks(
+                            editForm,
+                            (ids) => editForm.setData('permission_ids', ids),
+                            'edit',
+                        )}
 
-                            <div className="d-flex gap-2">
-                                <Button type="submit" disabled={editForm.processing}>
-                                    Update Role
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="secondary"
-                                    onClick={() => {
-                                        setEditingRole(null);
-                                        editForm.reset();
-                                    }}
-                                >
-                                    Batal
-                                </Button>
-                            </div>
-                        </form>
-                    </Card.Body>
-                </Card>
+                        <div className="d-flex gap-2">
+                            <Button type="submit" disabled={editForm.processing}>
+                                Update Role
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => {
+                                    setEditingRole(null);
+                                    editForm.reset();
+                                }}
+                            >
+                                Batal
+                            </Button>
+                        </div>
+                    </form>
+                </FormCard>
             ) : null}
         </SuperAdminLayout>
     );
