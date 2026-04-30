@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class Borrowing extends Model
 {
@@ -85,17 +87,17 @@ class Borrowing extends Model
         return (float) $dueDate->diffInDays($returnedAt) * self::FINE_PER_DAY;
     }
 
-    public function scopeActive($query)
+    public function scopeActive( Builder $query)
     {
         return $query->whereIn('status', self::ACTIVE_STATUSES);
     }
 
-    public function scopeReserved($query)
+    public function scopeReserved(Builder $query)
     {
         return $query->where('status', self::STATUS_RESERVED);
     }
 
-    public function scopeReturned($query)
+    public function scopeReturned(Builder $query)
     {
         return $query->where('status', self::STATUS_RETURNED);
     }
