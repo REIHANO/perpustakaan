@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Head, useForm, router, usePage } from '@inertiajs/react';
-import { Card, Row, Col } from '@themesberg/react-bootstrap';
+import { Row, Col } from '@themesberg/react-bootstrap';
 import SuperAdminLayout from '../../../Layouts/SuperAdminLayout';
 import Button from '../../../Components/Button';
 import FormCard from '../../../Components/FormCard';
@@ -14,6 +14,7 @@ export default function Index({ users, roles }) {
     const { auth } = usePage().props;
     const permissions = auth?.user?.permissions || [];
     const canManageUsers = hasPermission(permissions, 'manage-users');
+    const [editingUser, setEditingUser] = useState(null);
 
     const defaultRole = roles.find((role) => role.slug === 'member')?.slug || roles[0]?.slug || 'member';
 
@@ -24,30 +25,38 @@ export default function Index({ users, roles }) {
         role: defaultRole,
     });
 
-    const updateForm = useForm({
-        id: null,
-        name: '',
-        email: '',
-        password: '',
-        role: defaultRole,
-    });
-
     const tableRows = useMemo(() => users.data ?? [], [users]);
 
-    const submitCreate = (e) => {
-        e.preventDefault();
-        form.post('/super-admin/users', {
-            preserveScroll: true,
-            onSuccess: () => form.reset(),
-        });
+    const resetForm = () => {
+        setEditingUser(null);
+        form.reset();
+        form.clearErrors();
+        form.setData('role', defaultRole);
     };
 
-    const submitUpdate = (e) => {
+    const startEdit = (user) => {
+        setEditingUser(user);
+        form.setData('name', user.name);
+        form.setData('email', user.email);
+        form.setData('password', '');
+        form.setData('role', user.role);
+        form.clearErrors();
+    };
+
+    const submit = (e) => {
         e.preventDefault();
-        updateForm.patch(`/super-admin/users/${updateForm.data.id}`, {
+
+        const options = {
             preserveScroll: true,
-            onSuccess: () => updateForm.reset(),
-        });
+            onSuccess: resetForm,
+        };
+
+        if (editingUser) {
+            form.patch(`/super-admin/users/${editingUser.id}`, options);
+            return;
+        }
+
+        form.post('/super-admin/users', options);
     };
 
     return (
@@ -57,18 +66,33 @@ export default function Index({ users, roles }) {
             <Row className="g-4">
                 {canManageUsers ? (
                     <Col xl={4}>
-                        <FormCard title="Tambah User" subtitle="Buat user baru dan tentukan role awal.">
-                            <form onSubmit={submitCreate} className="d-grid gap-3">
+                        <FormCard
+                            title={editingUser ? 'Edit User' : 'Tambah User'}
+                            subtitle={editingUser ? 'Pilih user dari tabel lalu perbarui datanya di sini.' : 'Buat user baru dan tentukan role awal.'}
+                            action={editingUser ? (
+                                <Button variant="secondary" className="btn-sm" onClick={resetForm}>
+                                    Batal Edit
+                                </Button>
+                            ) : null}
+                        >
+                            <form onSubmit={submit} className="d-grid gap-3">
                                 <Input label="Nama" value={form.data.name} onChange={(e) => form.setData('name', e.target.value)} error={form.errors.name} />
                                 <Input label="Email" type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)} error={form.errors.email} />
-                                <Input label="Password" type="password" value={form.data.password} onChange={(e) => form.setData('password', e.target.value)} error={form.errors.password} />
+                                <Input
+                                    label={editingUser ? 'Password Baru' : 'Password'}
+                                    type="password"
+                                    value={form.data.password}
+                                    onChange={(e) => form.setData('password', e.target.value)}
+                                    error={form.errors.password}
+                                    placeholder={editingUser ? 'Kosongkan jika tidak ingin mengganti password' : 'Minimal 8 karakter'}
+                                />
                                 <Select label="Role" value={form.data.role} onChange={(e) => form.setData('role', e.target.value)} error={form.errors.role}>
                                     {roles.map((role) => (
                                         <option key={role.slug} value={role.slug}>{role.name}</option>
                                     ))}
                                 </Select>
                                 <Button type="submit" disabled={form.processing} className="w-100">
-                                    Simpan
+                                    {editingUser ? 'Update' : 'Simpan'}
                                 </Button>
                             </form>
                         </FormCard>
@@ -102,20 +126,20 @@ export default function Index({ users, roles }) {
                                                     <Button
                                                         variant="secondary"
                                                         className="btn-sm"
-                                                        onClick={() => {
-                                                            updateForm.setData('id', user.id);
-                                                            updateForm.setData('name', user.name);
-                                                            updateForm.setData('email', user.email);
-                                                            updateForm.setData('password', '');
-                                                            updateForm.setData('role', user.role);
-                                                        }}
+                                                        onClick={() => startEdit(user)}
                                                     >
                                                         Edit
                                                     </Button>
                                                     <Button
                                                         variant="danger"
                                                         className="btn-sm"
-                                                        onClick={() => router.delete(`/super-admin/users/${user.id}`, { preserveScroll: true })}
+                                                        onClick={() => {
+                                                            if (!window.confirm(`Hapus user "${user.name}"?`)) {
+                                                                return;
+                                                            }
+
+                                                            router.delete(`/super-admin/users/${user.id}`, { preserveScroll: true });
+                                                        }}
                                                     >
                                                         Hapus
                                                     </Button>
@@ -129,24 +153,6 @@ export default function Index({ users, roles }) {
                             </tbody>
                         </table>
                     </Table>
-
-                    {canManageUsers ? (
-                        <FormCard className="mt-4" title="Update User" subtitle="Pilih user dari tabel lalu perbarui datanya di sini.">
-                            <form onSubmit={submitUpdate} className="d-grid gap-3">
-                                <Input label="Nama" value={updateForm.data.name} onChange={(e) => updateForm.setData('name', e.target.value)} error={updateForm.errors.name} />
-                                <Input label="Email" type="email" value={updateForm.data.email} onChange={(e) => updateForm.setData('email', e.target.value)} error={updateForm.errors.email} />
-                                <Input label="Password Baru" type="password" value={updateForm.data.password} onChange={(e) => updateForm.setData('password', e.target.value)} error={updateForm.errors.password} />
-                                <Select label="Role" value={updateForm.data.role} onChange={(e) => updateForm.setData('role', e.target.value)} error={updateForm.errors.role}>
-                                    {roles.map((role) => (
-                                        <option key={role.slug} value={role.slug}>{role.name}</option>
-                                    ))}
-                                </Select>
-                                <Button type="submit" disabled={updateForm.processing || !updateForm.data.id}>
-                                    Update
-                                </Button>
-                            </form>
-                        </FormCard>
-                    ) : null}
                 </Col>
             </Row>
         </SuperAdminLayout>

@@ -30,25 +30,25 @@ export default function Show({ book, activeBorrowing, relatedBooks }) {
             <Head title={book.title} />
 
             <div className="row g-4">
-                <div className="col-xl-8">
+                <div className="col-xl-12">
                     <Card className="overflow-hidden">
                         <div
                             className="p-4 p-lg-5"
                             style={{ background: 'linear-gradient(180deg, rgba(37,99,235,0.10) 0%, rgba(255,255,255,1) 100%)' }}
                         >
                             <div className="row g-4 align-items-start">
-                                <div className="col-md-4 col-lg-3">
+                                <div className="col-md-4 col-lg-4">
                                     <img
                                         src={book.cover_url || 'https://placehold.co/400x600?text=No+Cover'}
                                         alt={book.title}
-                                        className="img-fluid rounded-4 shadow-sm w-100"
-                                        style={{ objectFit: 'cover', minHeight: '320px' }}
+                                        className="img-fluid rounded-4 shadow-sm w-75"
+                                        style={{ objectFit: 'cover', minHeight: '100px' }}
                                         onError={(e) => {
                                             e.currentTarget.src = 'https://placehold.co/400x600?text=No+Cover';
                                         }}
                                     />
                                 </div>
-                                <div className="col-md-8 col-lg-9">
+                                <div className="col-md-8 col-lg-8">
                                     <div className="d-flex flex-column flex-sm-row justify-content-between gap-3 mb-4">
                                         <div className="pe-sm-4">
                                             <p className="small text-primary text-uppercase fw-bold mb-2">
@@ -111,7 +111,7 @@ export default function Show({ book, activeBorrowing, relatedBooks }) {
                     </Card>
                 </div>
 
-                <div className="col-xl-4">
+                <div className="col-xl-12">
                     <Card className="h-100">
                         <div className="p-1 p-lg-2">
                             <h2 className="h5 mb-1 text-dark">Related Books</h2>
@@ -129,8 +129,8 @@ export default function Show({ book, activeBorrowing, relatedBooks }) {
                                                 <img
                                                     src={item.cover_url || 'https://placehold.co/160x220?text=No+Cover'}
                                                     alt={item.title}
-                                                    width="56"
-                                                    height="80"
+                                                    width="100"
+                                                    height="300"
                                                     className="rounded"
                                                     style={{ objectFit: 'cover' }}
                                                     onError={(e) => {

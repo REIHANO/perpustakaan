@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import { Card, Row, Col, Form } from '@themesberg/react-bootstrap';
 import SuperAdminLayout from '../../../Layouts/SuperAdminLayout';
@@ -31,7 +31,7 @@ function RolePermissionCard({ role, permissions, selectedIds }) {
                 <h5 className="mb-1 text-capitalize">{role}</h5>
                 <p className="mb-0 text-muted">Atur permission untuk role ini.</p>
             </Card.Header>
-            <Card.Body className="p-4 p-lg-5">
+            <Card.Body className="p-4 p-lg-6">
                 <form onSubmit={submit} className="d-grid gap-3">
                     <div className="d-grid gap-2">
                         <div className="rounded-3 border bg-light p-3">
@@ -90,20 +90,43 @@ function RolePermissionCard({ role, permissions, selectedIds }) {
 }
 
 export default function Index({ permissions, roles, rolePermissions }) {
-    const createForm = useForm({
+    const [editingPermission, setEditingPermission] = useState(null);
+    const permissionRows = useMemo(() => permissions ?? [], [permissions]);
+
+    const form = useForm({
         name: '',
         slug: '',
         description: '',
     });
 
-    const permissionRows = useMemo(() => permissions ?? [], [permissions]);
+    const resetForm = () => {
+        setEditingPermission(null);
+        form.reset();
+        form.clearErrors();
+    };
 
-    const submitCreate = (e) => {
+    const startEdit = (permission) => {
+        setEditingPermission(permission);
+        form.setData('name', permission.name);
+        form.setData('slug', permission.slug);
+        form.setData('description', permission.description || '');
+        form.clearErrors();
+    };
+
+    const submit = (e) => {
         e.preventDefault();
-        createForm.post('/super-admin/permissions', {
+
+        const options = {
             preserveScroll: true,
-            onSuccess: () => createForm.reset(),
-        });
+            onSuccess: resetForm,
+        };
+
+        if (editingPermission) {
+            form.patch(`/super-admin/permissions/${editingPermission.id}`, options);
+            return;
+        }
+
+        form.post('/super-admin/permissions', options);
     };
 
     return (
@@ -112,13 +135,37 @@ export default function Index({ permissions, roles, rolePermissions }) {
 
             <Row className="g-4">
                 <Col xl={4}>
-                    <FormCard title="Tambah Permission" subtitle="Buat permission baru untuk dipakai role.">
-                        <form onSubmit={submitCreate} className="d-grid gap-3">
-                            <Input label="Nama" value={createForm.data.name} onChange={(e) => createForm.setData('name', e.target.value)} error={createForm.errors.name} />
-                            <Input label="Slug" value={createForm.data.slug} onChange={(e) => createForm.setData('slug', e.target.value)} error={createForm.errors.slug} />
-                            <Input label="Deskripsi" value={createForm.data.description} onChange={(e) => createForm.setData('description', e.target.value)} error={createForm.errors.description} />
-                            <Button type="submit" disabled={createForm.processing}>
-                                Simpan
+                    <FormCard
+                        title={editingPermission ? 'Edit Permission' : 'Tambah Permission'}
+                        subtitle={editingPermission ? 'Perbarui permission yang sudah dipilih dari tabel.' : 'Buat permission baru untuk dipakai role.'}
+                        action={editingPermission ? (
+                            <Button variant="secondary" className="btn-sm" onClick={resetForm}>
+                                Batal Edit
+                            </Button>
+                        ) : null}
+                    >
+                        <form onSubmit={submit} className="d-grid gap-3">
+                            <Input
+                                label="Nama"
+                                value={form.data.name}
+                                onChange={(e) => form.setData('name', e.target.value)}
+                                error={form.errors.name}
+                            />
+                            <Input
+                                label="Slug"
+                                value={form.data.slug}
+                                onChange={(e) => form.setData('slug', e.target.value)}
+                                error={form.errors.slug}
+                                placeholder={editingPermission ? 'Slug wajib diisi saat edit' : 'opsional, otomatis dari nama'}
+                            />
+                            <Input
+                                label="Deskripsi"
+                                value={form.data.description}
+                                onChange={(e) => form.setData('description', e.target.value)}
+                                error={form.errors.description}
+                            />
+                            <Button type="submit" disabled={form.processing}>
+                                {editingPermission ? 'Update' : 'Simpan'}
                             </Button>
                         </form>
                     </FormCard>
@@ -159,30 +206,20 @@ export default function Index({ permissions, roles, rolePermissions }) {
                                                 <Button
                                                     variant="secondary"
                                                     className="btn-sm"
-                                                    onClick={() => {
-                                                        const nextName = window.prompt('Nama permission', permission.name);
-                                                        if (nextName === null) {
-                                                            return;
-                                                        }
-
-                                                        const nextSlug = window.prompt('Slug permission', permission.slug);
-                                                        if (nextSlug === null) {
-                                                            return;
-                                                        }
-
-                                                        router.patch(`/super-admin/permissions/${permission.id}`, {
-                                                            name: nextName,
-                                                            slug: nextSlug,
-                                                            description: permission.description || '',
-                                                        }, { preserveScroll: true });
-                                                    }}
+                                                    onClick={() => startEdit(permission)}
                                                 >
                                                     Edit
                                                 </Button>
                                                 <Button
                                                     variant="danger"
                                                     className="btn-sm"
-                                                    onClick={() => router.delete(`/super-admin/permissions/${permission.id}`, { preserveScroll: true })}
+                                                    onClick={() => {
+                                                        if (!window.confirm(`Hapus permission "${permission.name}"?`)) {
+                                                            return;
+                                                        }
+
+                                                        router.delete(`/super-admin/permissions/${permission.id}`, { preserveScroll: true });
+                                                    }}
                                                 >
                                                     Hapus
                                                 </Button>

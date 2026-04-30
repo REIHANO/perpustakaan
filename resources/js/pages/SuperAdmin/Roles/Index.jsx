@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Card, Row, Col, Form } from '@themesberg/react-bootstrap';
+import { Row, Col, Form } from '@themesberg/react-bootstrap';
 import SuperAdminLayout from '../../../Layouts/SuperAdminLayout';
 import Button from '../../../Components/Button';
 import FormCard from '../../../Components/FormCard';
@@ -38,33 +38,30 @@ export default function Index({ roles, permissions }) {
     const circulationPermission = permissionRows.find((permission) => permission.slug === CIRCULATION_SLUG);
     const setFinePermission = permissionRows.find((permission) => permission.slug === SET_FINE_SLUG);
 
-    const createForm = useForm({
+    const form = useForm({
         name: '',
         slug: '',
         description: '',
         permission_ids: [],
     });
 
-    const editForm = useForm({
-        name: '',
-        description: '',
-        permission_ids: [],
-    });
-
-    const resetCreate = () => {
-        createForm.reset();
-        createForm.clearErrors();
+    const resetForm = () => {
+        setEditingRole(null);
+        form.reset();
+        form.clearErrors();
     };
 
     const startEdit = (role) => {
         setEditingRole(role);
-        editForm.setData('name', role.name);
-        editForm.setData('description', role.description || '');
-        editForm.setData('permission_ids', role.permission_ids || []);
+        form.setData('name', role.name);
+        form.setData('slug', role.slug);
+        form.setData('description', role.description || '');
+        form.setData('permission_ids', role.permission_ids || []);
+        form.clearErrors();
     };
 
-    const applyPermission = (form, setData, permissionId, checked) => {
-        const current = form.data.permission_ids;
+    const applyPermission = (currentForm, setData, permissionId, checked) => {
+        const current = currentForm.data.permission_ids;
         const next = checked
             ? [...current, permissionId]
             : current.filter((id) => id !== permissionId);
@@ -72,26 +69,23 @@ export default function Index({ roles, permissions }) {
         setData(normalizePermissionIds(next, circulationPermission?.id, setFinePermission?.id));
     };
 
-    const submitCreate = (e) => {
+    const submit = (e) => {
         e.preventDefault();
-        createForm.post('/super-admin/roles', {
+
+        const options = {
             preserveScroll: true,
-            onSuccess: resetCreate,
-        });
+            onSuccess: resetForm,
+        };
+
+        if (editingRole) {
+            form.patch(`/super-admin/roles/${editingRole.id}`, options);
+            return;
+        }
+
+        form.post('/super-admin/roles', options);
     };
 
-    const submitUpdate = (e) => {
-        e.preventDefault();
-        editForm.patch(`/super-admin/roles/${editingRole.id}`, {
-            preserveScroll: true,
-            onSuccess: () => {
-                setEditingRole(null);
-                editForm.reset();
-            },
-        });
-    };
-
-    const renderPermissionChecks = (form, setData, prefix) => (
+    const renderPermissionChecks = (currentForm, setData, prefix) => (
         <div className="d-grid gap-2">
             {permissionRows
                 .filter((permission) => permission.slug !== SET_FINE_SLUG)
@@ -101,8 +95,8 @@ export default function Index({ roles, permissions }) {
                         type="checkbox"
                         id={`${prefix}-${permission.slug}`}
                         label={`${permission.name} (${permission.slug})`}
-                        checked={form.data.permission_ids.includes(permission.id)}
-                        onChange={(e) => applyPermission(form, setData, permission.id, e.target.checked)}
+                        checked={currentForm.data.permission_ids.includes(permission.id)}
+                        onChange={(e) => applyPermission(currentForm, setData, permission.id, e.target.checked)}
                     />
                 ))}
 
@@ -120,22 +114,22 @@ export default function Index({ roles, permissions }) {
                         type="checkbox"
                         id={`${prefix}-${circulationPermission.slug}`}
                         label={`${circulationPermission.name} (${circulationPermission.slug})`}
-                        checked={form.data.permission_ids.includes(circulationPermission.id)}
-                        onChange={(e) => applyPermission(form, setData, circulationPermission.id, e.target.checked)}
+                        checked={currentForm.data.permission_ids.includes(circulationPermission.id)}
+                        onChange={(e) => applyPermission(currentForm, setData, circulationPermission.id, e.target.checked)}
                     />
                     <Form.Check
                         className="mt-2"
                         type="checkbox"
                         id={`${prefix}-${setFinePermission.slug}`}
                         label={`${setFinePermission.name} (${setFinePermission.slug})`}
-                        checked={form.data.permission_ids.includes(setFinePermission.id)}
-                        disabled={!form.data.permission_ids.includes(circulationPermission.id)}
+                        checked={currentForm.data.permission_ids.includes(setFinePermission.id)}
+                        disabled={!currentForm.data.permission_ids.includes(circulationPermission.id)}
                         onChange={(e) => {
-                            if (!form.data.permission_ids.includes(circulationPermission.id) && e.target.checked) {
+                            if (!currentForm.data.permission_ids.includes(circulationPermission.id) && e.target.checked) {
                                 return;
                             }
 
-                            applyPermission(form, setData, setFinePermission.id, e.target.checked);
+                            applyPermission(currentForm, setData, setFinePermission.id, e.target.checked);
                         }}
                     />
                 </div>
@@ -164,36 +158,54 @@ export default function Index({ roles, permissions }) {
 
             <Row className="g-4">
                 <Col xl={4}>
-                    <FormCard title="Tambah Role Baru" subtitle="Buat role custom berdasarkan permission.">
-                        <form onSubmit={submitCreate} className="d-grid gap-3">
+                    <FormCard
+                        title={editingRole ? 'Edit Role' : 'Tambah Role Baru'}
+                        subtitle={editingRole ? 'Perbarui role yang sudah dipilih dari tabel.' : 'Buat role custom berdasarkan permission.'}
+                        action={editingRole ? (
+                            <Button variant="secondary" className="btn-sm" onClick={resetForm}>
+                                Batal Edit
+                            </Button>
+                        ) : null}
+                    >
+                        <form onSubmit={submit} className="d-grid gap-3">
                             <Input
                                 label="Nama Role"
-                                value={createForm.data.name}
-                                onChange={(e) => createForm.setData('name', e.target.value)}
-                                error={createForm.errors.name}
+                                value={form.data.name}
+                                onChange={(e) => form.setData('name', e.target.value)}
+                                error={form.errors.name}
                             />
-                            <Input
-                                label="Slug Role"
-                                value={createForm.data.slug}
-                                onChange={(e) => createForm.setData('slug', e.target.value)}
-                                error={createForm.errors.slug}
-                                placeholder="opsional, otomatis dari nama"
-                            />
+                            {editingRole ? (
+                                <Input
+                                    label="Slug Role"
+                                    value={form.data.slug}
+                                    disabled
+                                    readOnly
+                                    placeholder="Slug tidak dapat diubah saat edit"
+                                />
+                            ) : (
+                                <Input
+                                    label="Slug Role"
+                                    value={form.data.slug}
+                                    onChange={(e) => form.setData('slug', e.target.value)}
+                                    error={form.errors.slug}
+                                    placeholder="opsional, otomatis dari nama"
+                                />
+                            )}
                             <Input
                                 label="Deskripsi"
-                                value={createForm.data.description}
-                                onChange={(e) => createForm.setData('description', e.target.value)}
-                                error={createForm.errors.description}
+                                value={form.data.description}
+                                onChange={(e) => form.setData('description', e.target.value)}
+                                error={form.errors.description}
                             />
 
                             {renderPermissionChecks(
-                                createForm,
-                                (ids) => createForm.setData('permission_ids', ids),
-                                'create',
+                                form,
+                                (ids) => form.setData('permission_ids', ids),
+                                editingRole ? 'edit' : 'create',
                             )}
 
-                            <Button type="submit" disabled={createForm.processing}>
-                                Simpan Role
+                            <Button type="submit" disabled={form.processing}>
+                                {editingRole ? 'Update Role' : 'Simpan Role'}
                             </Button>
                         </form>
                     </FormCard>
@@ -260,47 +272,6 @@ export default function Index({ roles, permissions }) {
                     </Table>
                 </Col>
             </Row>
-
-            {editingRole ? (
-                <FormCard className="mt-4" title="Edit Role" subtitle="Nama dan permission bisa diperbarui tanpa mengubah slug.">
-                    <form onSubmit={submitUpdate} className="d-grid gap-3">
-                        <Input
-                            label="Nama Role"
-                            value={editForm.data.name}
-                            onChange={(e) => editForm.setData('name', e.target.value)}
-                            error={editForm.errors.name}
-                        />
-                        <Input
-                            label="Deskripsi"
-                            value={editForm.data.description}
-                            onChange={(e) => editForm.setData('description', e.target.value)}
-                            error={editForm.errors.description}
-                        />
-
-                        {renderPermissionChecks(
-                            editForm,
-                            (ids) => editForm.setData('permission_ids', ids),
-                            'edit',
-                        )}
-
-                        <div className="d-flex gap-2">
-                            <Button type="submit" disabled={editForm.processing}>
-                                Update Role
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                onClick={() => {
-                                    setEditingRole(null);
-                                    editForm.reset();
-                                }}
-                            >
-                                Batal
-                            </Button>
-                        </div>
-                    </form>
-                </FormCard>
-            ) : null}
         </SuperAdminLayout>
     );
 }
