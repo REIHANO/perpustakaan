@@ -29,10 +29,10 @@ export default function Edit({ user }) {
 
             <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
                 <Card className="border-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)' }}>
-                    <div className="p-4 p-lg-5 text-white">
-                        <p className="text-xs uppercase tracking-[0.2em] text-white-50 mb-2">Account</p>
+                    <div className="p-4 p-lg-5 text-black">
+                        <p className="text-xs uppercase tracking-[0.2em] text-black-500 mb-2">Account</p>
                         <h2 className="mt-2 text-2xl fw-bold mb-2">{user.name}</h2>
-                        <p className="mt-2 text-sm text-white-50 mb-0">{user.email}</p>
+                        <p className="mt-2 text-sm text-black-500 mb-0">{user.email}</p>
                         <div className="mt-4">
                             <Badge variant="primary">{user.role}</Badge>
                         </div>

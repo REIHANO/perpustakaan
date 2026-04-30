@@ -53,7 +53,7 @@ export default function Dashboard({ stats, activeBorrowings, notifications, reco
                                             <Row className="g-2 mt-3 small text-muted">
                                                 <Col sm={4}>Pinjam: {formatDate(item.borrow_date)}</Col>
                                                 <Col sm={4}>Tempo: {formatDate(item.due_date)}</Col>
-                                                <Col sm={4}>Denda: Rp{Number(item.fine_amount || 0).toLocaleString('id-ID')}</Col>
+                                                <Col sm={4}>Denda: Rp{parseFloat(item.fine_amount || 0).toLocaleString('id-ID')}</Col>
                                             </Row>
                                         </div>
                                     ))

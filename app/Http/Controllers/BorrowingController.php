@@ -106,7 +106,7 @@ class BorrowingController extends Controller
         return Borrowing::query()
             ->where('user_id', $userId)
             ->where('book_id', $bookId)
-            ->whereIn('status', Borrowing::ACTIVE_STATUSES)
+            ->whereIn('status', [Borrowing::STATUS_BORROWED, Borrowing::STATUS_OVERDUE])
             ->lockForUpdate()
             ->first() !== null;
     }

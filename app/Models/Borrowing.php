@@ -41,7 +41,7 @@ class Borrowing extends Model
     protected $casts = [
         'borrow_date' => 'date',
         'return_date' => 'date',
-        'fine_amount' => 'decimal:2',
+        'fine_amount' => 'float',
     ];
 
     protected $appends = [
