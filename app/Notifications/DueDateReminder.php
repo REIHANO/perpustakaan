@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -34,11 +33,20 @@ class DueDateReminder extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new \Illuminate\Notifications\Messages\MailMessage)
-            ->subject('Pengingat Jatuh Tempo Buku')
-            ->line('Buku yang kamu pinjam akan segera jatuh tempo.')
-            ->action('Lihat Pinjaman', url('/dashboard'))
-            ->line('Mohon segera kembalikan buku untuk menghindari denda.');
+        $name = $notifiable->name ?? __('ui.brand');
+
+        return (new MailMessage)
+            ->subject(__('email.due_date.subject'))
+            ->markdown('mail.due-date-reminder', [
+                'name' => $name,
+                'dashboardUrl' => url('/dashboard'),
+                'subject' => __('email.due_date.subject'),
+                'greeting' => __('email.due_date.greeting', ['name' => $name]),
+                'intro' => __('email.due_date.intro'),
+                'reminder' => __('email.due_date.reminder'),
+                'action' => __('email.due_date.action'),
+                'closing' => __('email.due_date.closing'),
+            ]);
     }
 
     /**

@@ -4,18 +4,21 @@ import { faBoxOpen, faCartArrowDown, faChartPie, faChevronDown, faClipboard, faC
 import { Col, Row, Button, Dropdown } from '@themesberg/react-bootstrap';
 import { ChoosePhotoWidget, ProfileCardWidget } from "../components/Widgets";
 import { GeneralInfoForm } from "../components/Forms";
+import { useI18n } from '../lib/i18n';
 
 import Profile3 from "../assets/img/team/profile-picture-3.jpg";
 
 
 export default () => {
+  const { t } = useI18n();
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         <Dropdown>
           <Dropdown.Toggle as={Button} variant="secondary" className="text-dark me-2">
             <FontAwesomeIcon icon={faPlus} className="me-2" />
-            <span>New</span>
+            <span>{t('actions.add', 'Add')}</span>
           </Dropdown.Toggle>
           <Dropdown.Menu className="dashboard-dropdown dropdown-menu-left mt-2">
             <Dropdown.Item>
@@ -78,7 +81,7 @@ export default () => {
             </Col>
             <Col xs={12}>
               <ChoosePhotoWidget
-                title="Select profile photo"
+                title={t('settings.select_photo', 'Select profile photo')}
                 photo={Profile3}
               />
             </Col>

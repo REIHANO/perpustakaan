@@ -5,24 +5,27 @@ import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
 import Button from '../../../Components/Button';
 import { formatDate, formatCurrency } from '../../../lib/format';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ borrowings }) {
+    const { t } = useI18n();
+
     return (
         <MemberLayout
-            title="Borrowing History"
-            subtitle="Riwayat peminjaman aktif, selesai, dan denda yang tercatat."
+            title={t('nav.history', 'History')}
+            subtitle={t('history.subtitle', 'Active, finished, and recorded fine borrowings.')}
         >
-            <Head title="Borrowing History" />
+            <Head title={t('nav.history', 'History')} />
 
-            <Table title="Daftar Peminjaman" subtitle="Semua transaksi milik akun aktif">
+            <Table title={t('history.list', 'Borrowing List')} subtitle={t('history.subtitle_2', 'All transactions for the active account')}>
                 <table className="min-w-full divide-y divide-white/10">
                     <thead className="bg-white/5">
                         <tr className="text-left text-xs uppercase tracking-[0.2em] text-slate-400">
-                            <th className="px-6 py-4">Buku</th>
-                            <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4">Pinjam</th>
-                            <th className="px-6 py-4">Tempo</th>
-                            <th className="px-6 py-4">Denda</th>
+                            <th className="px-6 py-4">{t('labels.book', 'Book')}</th>
+                            <th className="px-6 py-4">{t('labels.status', 'Status')}</th>
+                            <th className="px-6 py-4">{t('labels.borrow_date', 'Borrow Date')}</th>
+                            <th className="px-6 py-4">{t('labels.due_date', 'Due Date')}</th>
+                            <th className="px-6 py-4">{t('labels.fine', 'Fine')}</th>
                             <th className="px-6 py-4" />
                         </tr>
                     </thead>
@@ -34,20 +37,20 @@ export default function Index({ borrowings }) {
                                     <div className="text-xs text-slate-500">{item.book?.category?.name}</div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Badge
-                                        variant={
-                                            item.status === 'returned'
-                                                ? 'success'
-                                                : item.status === 'overdue'
-                                                    ? 'danger'
-                                                    : item.status === 'reserved'
-                                                        ? 'info'
-                                                        : 'warning'
-                                        }
-                                    >
-                                        {item.status}
-                                    </Badge>
-                                </td>
+                                        <Badge
+                                            variant={
+                                                item.status === 'returned'
+                                                    ? 'success'
+                                                    : item.status === 'overdue'
+                                                        ? 'danger'
+                                                        : item.status === 'reserved'
+                                                            ? 'info'
+                                                            : 'warning'
+                                            }
+                                        >
+                                        {t(`states.${item.status}`, item.status)}
+                                        </Badge>
+                                    </td>
                                 <td className="px-6 py-4">{formatDate(item.borrow_date)}</td>
                                 <td className="px-6 py-4">{formatDate(item.due_date)}</td>
                                 <td className="px-6 py-4">{formatCurrency(item.fine_amount)}</td>
@@ -63,7 +66,7 @@ export default function Index({ borrowings }) {
                                                 )
                                             }
                                         >
-                                            Return
+                                            {t('actions.return', 'Return')}
                                         </Button>
                                     ) : null}
                                 </td>

@@ -4,17 +4,19 @@ import Sidebar from '../Components/Sidebar';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/Footer';
 import { hasAnyPermission, hasPermission } from '../lib/permissions';
+import { useI18n } from '../lib/i18n';
 
 const defaultNavigation = [
-    { label: 'Dashboard', href: '/admin/dashboard', icon: 'bi-speedometer2' },
-    { label: 'Books', href: '/admin/books', icon: 'bi-book', permission: 'manage-books' },
-    { label: 'Categories', href: '/admin/categories', icon: 'bi-tags', permission: 'manage-categories' },
-    { label: 'Circulation', href: '/admin/circulation', icon: 'bi-arrow-left-right', permission: 'manage-circulation' },
-    { label: 'Reports', href: '/admin/reports', icon: 'bi-clipboard-data', permission: 'view-reports' },
+    { labelKey: 'nav.dashboard', href: '/admin/dashboard', icon: 'bi-speedometer2' },
+    { labelKey: 'nav.books', href: '/admin/books', icon: 'bi-book', permission: 'manage-books' },
+    { labelKey: 'nav.categories', href: '/admin/categories', icon: 'bi-tags', permission: 'manage-categories' },
+    { labelKey: 'nav.circulation', href: '/admin/circulation', icon: 'bi-arrow-left-right', permission: 'manage-circulation' },
+    { labelKey: 'nav.reports', href: '/admin/reports', icon: 'bi-clipboard-data', permission: 'view-reports' },
 ];
 
 export default function AuthenticatedLayout({ title, navigation, children }) {
     const { auth } = usePage().props;
+    const { t } = useI18n();
     const permissions = auth?.user?.permissions || [];
 
     const isAdminLike = hasAnyPermission(permissions, [
@@ -33,17 +35,22 @@ export default function AuthenticatedLayout({ title, navigation, children }) {
             : '/member/dashboard';
 
     const navigationItems = navigation ?? defaultNavigation;
-    const filteredNav = navigationItems.filter((item) => {
-        if (!item.permission) {
-            return true;
-        }
+    const filteredNav = navigationItems
+        .filter((item) => {
+            if (!item.permission) {
+                return true;
+            }
 
-        return hasPermission(permissions, item.permission);
-    });
+            return hasPermission(permissions, item.permission);
+        })
+        .map((item) => ({
+            ...item,
+            label: item.labelKey ? t(item.labelKey, item.label || '') : item.label,
+        }));
 
     return (
         <>
-            <Sidebar brand="Perpustakaan" brandHref={brandHref} navigation={filteredNav} />
+            <Sidebar brand={t('brand', 'Perpustakaan')} brandHref={brandHref} navigation={filteredNav} />
             <main className="content bg-light">
                 <Navbar title={title} />
                 <div className="px-3 px-md-4 pb-4">

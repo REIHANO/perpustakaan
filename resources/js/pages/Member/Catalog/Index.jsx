@@ -5,10 +5,12 @@ import Card from '../../../Components/Card';
 import Input from '../../../Components/Input';
 import Select from '../../../Components/Select';
 import Badge from '../../../Components/Badge';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ books, categories }) {
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('');
+    const { t } = useI18n();
 
     const filteredBooks = useMemo(() => {
         return books.filter((book) => {
@@ -27,10 +29,10 @@ export default function Index({ books, categories }) {
 
     return (
         <MemberLayout
-            title="Book Catalog"
-            subtitle="Cari buku secara realtime, filter kategori, dan cek status ketersediaan."
+            title={t('nav.catalog', 'Catalog')}
+            subtitle={t('catalog.subtitle', 'Search books in real time, filter by category, and check availability.')}
         >
-            <Head title="Book Catalog" />
+            <Head title={t('nav.catalog', 'Catalog')} />
 
             <div
                 className="rounded-4 border-0 shadow-sm overflow-hidden mb-4"
@@ -39,25 +41,25 @@ export default function Index({ books, categories }) {
                 <div className="p-4 p-md-5 text-white">
                     <div className="row g-4 align-items-end">
                         <div className="col-lg-7">
-                            <span className="badge bg-white text-primary mb-3">Member Catalog</span>
-                            <h1 className="display-6 fw-bold mb-2">Temukan buku dengan tampilan yang lebih bersih dan cepat.</h1>
+                            <span className="badge bg-white text-primary mb-3">{t('nav.catalog', 'Catalog')}</span>
+                            <h1 className="display-6 fw-bold mb-2">{t('catalog.hero_title', 'Find books with a cleaner and faster view.')}</h1>
                             <p className="mb-0 text-white-50">
-                                Gunakan pencarian realtime, filter kategori, dan status stok untuk memilih buku yang tersedia.
+                                {t('catalog.hero_subtitle', 'Use real-time search, category filters, and stock status to pick available books.')}
                             </p>
                         </div>
                         <div className="col-lg-5">
                             <div className="row g-3">
                                 <div className="col-12 col-sm-7">
                                     <Input
-                                        label="Search"
+                                        label={t('common.search', 'Search')}
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        placeholder="Judul, penulis, ISBN..."
+                                        placeholder={t('common.search_placeholder', 'Search title, author, ISBN...')}
                                     />
                                 </div>
                                 <div className="col-12 col-sm-5">
-                                    <Select label="Kategori" value={category} onChange={(e) => setCategory(e.target.value)}>
-                                        <option value="">Semua kategori</option>
+                                    <Select label={t('labels.category', 'Category')} value={category} onChange={(e) => setCategory(e.target.value)}>
+                                        <option value="">{t('catalog.all_categories', 'All categories')}</option>
                                         {categories.map((item) => (
                                             <option key={item.id} value={item.id}>
                                                 {item.name}
@@ -68,7 +70,7 @@ export default function Index({ books, categories }) {
                                 <div className="col-12">
                                     <div className="rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 p-3 d-flex align-items-center justify-content-between">
                                         <div>
-                                            <div className="small text-white-50">Hasil ditampilkan</div>
+                                            <div className="small text-white-50">{t('labels.result', 'Result')}</div>
                                             <div className="h3 mb-0 text-white">{filteredBooks.length}</div>
                                         </div>
                                         <i className="bi bi-journal-bookmark fs-1 text-white-50" />
@@ -100,20 +102,20 @@ export default function Index({ books, categories }) {
                                         />
                                         <div className="flex-grow-1">
                                             <p className="small text-primary text-uppercase fw-bold mb-1">
-                                                {book.category?.name || 'Uncategorized'}
+                                                {book.category?.name || t('catalog.uncategorized', 'Uncategorized')}
                                             </p>
                                             <h3 className="h6 mb-1 text-dark">{book.title}</h3>
                                             <p className="small text-muted mb-3">{book.author}</p>
                                             <Badge variant={book.is_available ? 'success' : 'danger'}>
-                                                {book.is_available ? 'Available' : 'Out of stock'}
+                                                {book.is_available ? t('states.available', 'Available') : t('states.out_of_stock', 'Out of stock')}
                                             </Badge>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="d-flex align-items-center justify-content-between p-3 small text-muted">
-                                    <span>ISBN {book.isbn}</span>
-                                    <span className="fw-semibold text-dark">Stok {book.stock}</span>
+                                    <span>{t('labels.isbn', 'ISBN')} {book.isbn}</span>
+                                    <span className="fw-semibold text-dark">{t('labels.stock', 'Stock')} {book.stock}</span>
                                 </div>
                             </Card>
                         </Link>
@@ -125,8 +127,8 @@ export default function Index({ books, categories }) {
                         <Card>
                             <div className="text-center py-5">
                                 <i className="bi bi-search fs-1 text-muted d-block mb-3" />
-                                <h3 className="h5 text-dark mb-2">Buku tidak ditemukan</h3>
-                                <p className="text-muted mb-0">Coba ubah kata kunci atau filter kategori.</p>
+                                <h3 className="h5 text-dark mb-2">{t('dashboard.book_not_found', 'Book not found')}</h3>
+                                <p className="text-muted mb-0">{t('dashboard.change_filter', 'Try changing the keyword or category filter.')}</p>
                             </div>
                         </Card>
                     </div>

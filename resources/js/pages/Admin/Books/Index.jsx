@@ -10,9 +10,11 @@ import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
 import { formatDate, formatNumber } from '../../../lib/format';
 import { hasPermission } from '../../../lib/permissions';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ books, categories }) {
     const { auth } = usePage().props;
+    const { t } = useI18n();
     const permissions = auth?.user?.permissions || [];
     const canManageBooks = hasPermission(permissions, 'manage-books');
 
@@ -114,25 +116,25 @@ export default function Index({ books, categories }) {
 
     return (
         <AdminLayout
-            title="Book Management"
-            subtitle="CRUD buku terhubung ke kategori, stok, dan cover."
+            title={t('nav.books', 'Books')}
+            subtitle={t('books.subtitle', 'CRUD books connected to categories, stock, and covers.')}
         >
-            <Head title="Admin Books" />
+            <Head title={t('nav.books', 'Books')} />
 
             <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr] items-start">
                 {canManageBooks ? (
                     <FormCard
-                        title={editingBook ? 'Ubah buku' : 'Tambah buku'}
-                        subtitle="CRUD buku terhubung ke kategori, stok, dan cover."
+                        title={editingBook ? t('common.edit', 'Edit') : t('actions.add', 'Add')}
+                        subtitle={t('books.subtitle', 'CRUD books connected to categories, stock, and covers.')}
                     >
                         <form onSubmit={submit} className="d-grid gap-3">
                             <Select
-                                label="Kategori"
+                                label={t('labels.category', 'Category')}
                                 value={form.data.category_id}
                                 onChange={(e) => form.setData('category_id', e.target.value)}
                                 error={form.errors.category_id}
                             >
-                                <option value="">Pilih kategori</option>
+                                <option value="">{t('books.select_category', 'Select category')}</option>
                                 {categoryOptions.map((category) => (
                                     <option key={category.id} value={category.id}>
                                         {category.name}
@@ -141,29 +143,29 @@ export default function Index({ books, categories }) {
                             </Select>
 
                             <Input
-                                label="Judul"
+                                label={t('labels.title', 'Title')}
                                 value={form.data.title}
                                 onChange={(e) => form.setData('title', e.target.value)}
                                 error={form.errors.title}
-                                placeholder="Contoh: Laravel untuk Pemula"
+                                placeholder={t('books.title_placeholder', 'Example: Laravel for Beginners')}
                             />
 
                             <Input
-                                label="Penulis"
+                                label={t('labels.author', 'Author')}
                                 value={form.data.author}
                                 onChange={(e) => form.setData('author', e.target.value)}
                                 error={form.errors.author}
                             />
 
                             <Input
-                                label="ISBN"
+                                label={t('labels.isbn', 'ISBN')}
                                 value={form.data.isbn}
                                 onChange={(e) => form.setData('isbn', e.target.value)}
                                 error={form.errors.isbn}
                             />
 
                             <Input
-                                label="Stok"
+                                label={t('labels.stock', 'Stock')}
                                 type="number"
                                 min="0"
                                 value={form.data.stock}
@@ -173,7 +175,7 @@ export default function Index({ books, categories }) {
 
                             <Input
                                 key={fileInputKey}
-                                label="Cover buku"
+                                label={t('labels.cover', 'Cover')}
                                 type="file"
                                 onChange={handleCoverChange}
                                 error={form.errors.cover}
@@ -182,10 +184,10 @@ export default function Index({ books, categories }) {
 
                             {coverPreview ? (
                                 <div className="rounded-3 border bg-light p-3">
-                                    <p className="small text-muted mb-2">Preview cover</p>
+                                    <p className="small text-muted mb-2">{t('books.cover_preview', 'Cover preview')}</p>
                                     <img
                                         src={coverPreview}
-                                        alt="Cover preview"
+                                        alt={t('books.cover_preview', 'Cover preview')}
                                         className="img-fluid rounded"
                                         style={{ maxHeight: '260px', objectFit: 'cover' }}
                                         onError={(e) => {
@@ -197,26 +199,26 @@ export default function Index({ books, categories }) {
 
                             <div className="d-flex gap-3">
                                 <Button type="submit" disabled={form.processing}>
-                                    {editingBook ? 'Update' : 'Save'}
+                                    {editingBook ? t('common.update', 'Update') : t('common.save', 'Save')}
                                 </Button>
                                 <Button type="button" variant="secondary" onClick={resetForm}>
-                                    Reset
+                                    {t('common.reset', 'Reset')}
                                 </Button>
                             </div>
                         </form>
                     </FormCard>
                 ) : null}
 
-                <Table title="Daftar Buku" subtitle={`${formatNumber(books.length)} buku tersimpan`}>
+                <Table title={t('books.list', 'Book List')} subtitle={`${formatNumber(books.length)} ${t('labels.books', 'books')}`}>
                     <table className="table table-hover align-middle mb-0">
                         <thead className="table-light">
                             <tr>
-                                <th>Buku</th>
-                                <th>ISBN</th>
-                                <th>Stok</th>
-                                <th>Kategori</th>
-                                <th>Dibuat</th>
-                                <th>Aksi</th>
+                                <th>{t('labels.book', 'Book')}</th>
+                                <th>{t('labels.isbn', 'ISBN')}</th>
+                                <th>{t('labels.stock', 'Stock')}</th>
+                                <th>{t('labels.category', 'Category')}</th>
+                                <th>{t('labels.date', 'Date')}</th>
+                                <th>{t('labels.action', 'Action')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -253,7 +255,7 @@ export default function Index({ books, categories }) {
                                         {canManageBooks ? (
                                             <div className="d-flex gap-2 flex-wrap">
                                                 <Button variant="secondary" onClick={() => startEdit(book)}>
-                                                    Edit
+                                                    {t('common.edit', 'Edit')}
                                                 </Button>
                                                 <Button
                                                     variant="danger"
@@ -261,11 +263,11 @@ export default function Index({ books, categories }) {
                                                         router.delete(`/admin/books/${book.id}`, { preserveScroll: true })
                                                     }
                                                 >
-                                                    Delete
+                                                    {t('common.delete', 'Delete')}
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <span className="text-muted small">Tidak ada akses</span>
+                                            <span className="text-muted small">{t('states.no_access', 'No access')}</span>
                                         )}
                                     </td>
                                 </tr>

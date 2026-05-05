@@ -9,9 +9,11 @@ import Select from '../../../Components/Select';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
 import { hasPermission } from '../../../lib/permissions';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ users, roles }) {
     const { auth } = usePage().props;
+    const { t } = useI18n();
     const permissions = auth?.user?.permissions || [];
     const canManageUsers = hasPermission(permissions, 'manage-users');
     const [editingUser, setEditingUser] = useState(null);
@@ -60,39 +62,39 @@ export default function Index({ users, roles }) {
     };
 
     return (
-        <SuperAdminLayout title="Manage Users">
-            <Head title="Super Admin Users" />
+        <SuperAdminLayout title={t('nav.users', 'Users')}>
+            <Head title={t('nav.users', 'Users')} />
 
             <Row className="g-4">
                 {canManageUsers ? (
                     <Col xl={4}>
                         <FormCard
-                            title={editingUser ? 'Edit User' : 'Tambah User'}
-                            subtitle={editingUser ? 'Pilih user dari tabel lalu perbarui datanya di sini.' : 'Buat user baru dan tentukan role awal.'}
+                            title={editingUser ? t('common.edit', 'Edit') : t('actions.add', 'Add')}
+                            subtitle={editingUser ? t('users.edit_subtitle', 'Select a user from the table and update it here.') : t('users.create_subtitle', 'Create a new user and choose an initial role.')}
                             action={editingUser ? (
                                 <Button variant="secondary" className="btn-sm" onClick={resetForm}>
-                                    Batal Edit
+                                    {t('common.cancel', 'Cancel')}
                                 </Button>
                             ) : null}
                         >
                             <form onSubmit={submit} className="d-grid gap-3">
-                                <Input label="Nama" value={form.data.name} onChange={(e) => form.setData('name', e.target.value)} error={form.errors.name} />
-                                <Input label="Email" type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)} error={form.errors.email} />
+                                <Input label={t('labels.name', 'Name')} value={form.data.name} onChange={(e) => form.setData('name', e.target.value)} error={form.errors.name} />
+                                <Input label={t('labels.email', 'Email')} type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)} error={form.errors.email} />
                                 <Input
-                                    label={editingUser ? 'Password Baru' : 'Password'}
+                                    label={editingUser ? t('auth.password_new', 'New password') : t('auth.password', 'Password')}
                                     type="password"
                                     value={form.data.password}
                                     onChange={(e) => form.setData('password', e.target.value)}
                                     error={form.errors.password}
-                                    placeholder={editingUser ? 'Kosongkan jika tidak ingin mengganti password' : 'Minimal 8 karakter'}
+                                    placeholder={editingUser ? t('users.password_optional', 'Leave blank if you do not want to change the password') : t('users.password_min', 'Minimum 8 characters')}
                                 />
-                                <Select label="Role" value={form.data.role} onChange={(e) => form.setData('role', e.target.value)} error={form.errors.role}>
+                                <Select label={t('labels.role', 'Role')} value={form.data.role} onChange={(e) => form.setData('role', e.target.value)} error={form.errors.role}>
                                     {roles.map((role) => (
                                         <option key={role.slug} value={role.slug}>{role.name}</option>
                                     ))}
                                 </Select>
                                 <Button type="submit" disabled={form.processing} className="w-100">
-                                    {editingUser ? 'Update' : 'Simpan'}
+                                    {editingUser ? t('common.update', 'Update') : t('common.save', 'Save')}
                                 </Button>
                             </form>
                         </FormCard>
@@ -100,14 +102,14 @@ export default function Index({ users, roles }) {
                 ) : null}
 
                 <Col xl={canManageUsers ? 8 : 12}>
-                    <Table title="Daftar User" subtitle="Edit role, ganti password, atau hapus user">
+                    <Table title={t('nav.users', 'Users')} subtitle={t('users.subtitle', 'Edit roles, change passwords, or remove users')}>
                         <table className="table table-hover align-middle mb-0">
                             <thead className="table-light">
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Aksi</th>
+                                    <th>{t('labels.name', 'Name')}</th>
+                                    <th>{t('labels.email', 'Email')}</th>
+                                    <th>{t('labels.role', 'Role')}</th>
+                                    <th>{t('labels.action', 'Action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -128,7 +130,7 @@ export default function Index({ users, roles }) {
                                                         className="btn-sm"
                                                         onClick={() => startEdit(user)}
                                                     >
-                                                        Edit
+                                                        {t('common.edit', 'Edit')}
                                                     </Button>
                                                     <Button
                                                         variant="danger"
@@ -141,11 +143,11 @@ export default function Index({ users, roles }) {
                                                             router.delete(`/super-admin/users/${user.id}`, { preserveScroll: true });
                                                         }}
                                                     >
-                                                        Hapus
+                                                        {t('common.delete', 'Delete')}
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <span className="text-muted small">Tidak ada akses</span>
+                                                <span className="text-muted small">{t('states.no_access', 'No access')}</span>
                                             )}
                                         </td>
                                     </tr>

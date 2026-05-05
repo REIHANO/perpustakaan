@@ -60,7 +60,7 @@ class AuthController extends Controller
             $request->session()->flash('auth.show_forgot_password_link', $failedLoginAttempts >= 3);
 
             throw ValidationException::withMessages([
-                'email' => __('Email atau password salah.'),
+                'email' => __('ui.auth.login_error'),
             ]);
         }
 

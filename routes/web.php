@@ -16,7 +16,10 @@ use App\Http\Controllers\SuperAdmin\RoleController as SuperAdminRoleController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\ReservationController;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return auth()->check()
@@ -40,6 +43,16 @@ Route::get('/register', function () {
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/language', function (Request $request) {
+    $validated = $request->validate([
+        'locale' => ['required', Rule::in(array_keys(config('i18n.supported_locales', [])))],
+    ]);
+
+    $request->session()->put('locale', $validated['locale']);
+    app()->setLocale($validated['locale']);
+
+    return back();
+})->name('language.switch');
 Route::get('/forgot-password', [AuthController::class, 'forgotPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])->name('password.reset');

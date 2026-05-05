@@ -9,8 +9,10 @@ import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
 import { formatDate, formatNumber } from '../../../lib/format';
 import { hasPermission } from '../../../lib/permissions';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ categories }) {
+    const { t } = useI18n();
     const { auth } = usePage().props;
     const permissions = auth?.user?.permissions || [];
     const canManageCategories = hasPermission(permissions, 'manage-categories');
@@ -50,54 +52,54 @@ export default function Index({ categories }) {
 
     return (
         <AdminLayout
-            title="Category Management"
-            subtitle="Kelola kategori buku dan relasi katalog secara cepat."
+            title={t('nav.categories', 'Categories')}
+            subtitle={t('categories.subtitle', 'Manage book categories and catalog relationships quickly.')}
         >
-            <Head title="Admin Categories" />
+            <Head title={t('nav.categories', 'Categories')} />
 
             <div className="grid gap-3 xl:grid-cols-[0.5fr_1.15fr]">
                 {canManageCategories ? (
                     <FormCard
-                        title={editingCategory ? 'Ubah kategori' : 'Buat kategori'}
-                        subtitle="Kelola kategori buku dan relasi katalog secara cepat."
+                        title={editingCategory ? t('common.edit', 'Edit') : t('actions.create', 'Create')}
+                        subtitle={t('categories.subtitle', 'Manage book categories and catalog relationships quickly.')}
                     >
                         <form onSubmit={submit} className="d-grid gap-3">
                             <Input
-                                label="Nama"
+                                label={t('labels.name', 'Name')}
                                 value={form.data.name}
                                 onChange={(e) => form.setData('name', e.target.value)}
                                 error={form.errors.name}
-                                placeholder="Contoh: Teknologi"
+                                placeholder={t('categories.name_placeholder', 'Example: Technology')}
                             />
                             <Input
-                                label="Slug"
+                                label={t('labels.slug', 'Slug')}
                                 value={form.data.slug}
                                 onChange={(e) => form.setData('slug', e.target.value)}
                                 error={form.errors.slug}
-                                placeholder="opsional, otomatis jika kosong"
+                                placeholder={t('categories.slug_placeholder', 'Optional, auto-generated if empty')}
                             />
 
                             <div className="d-flex gap-3">
                                 <Button type="submit" disabled={form.processing}>
-                                    {editingCategory ? 'Update' : 'Save'}
+                                    {editingCategory ? t('common.update', 'Update') : t('common.save', 'Save')}
                                 </Button>
                                 <Button variant="secondary" onClick={startCreate}>
-                                    Reset
+                                    {t('common.reset', 'Reset')}
                                 </Button>
                             </div>
                         </form>
                     </FormCard>
                 ) : null}
 
-                <Table title="Daftar Kategori" subtitle={`${formatNumber(categories.length)} kategori aktif`}>
+                <Table title={t('categories.list', 'Category List')} subtitle={`${formatNumber(categories.length)} ${t('labels.categories', 'categories')}`}>
                     <table className="table table-hover align-middle mb-0">
                         <thead className="table-light">
                             <tr>
-                                <th>Nama</th>
-                                <th>Slug</th>
-                                <th>Buku</th>
-                                <th>Dibuat</th>
-                                <th>Aksi</th>
+                                <th>{t('labels.name', 'Name')}</th>
+                                <th>{t('labels.slug', 'Slug')}</th>
+                                <th>{t('labels.books', 'Books')}</th>
+                                <th>{t('labels.date', 'Date')}</th>
+                                <th>{t('labels.action', 'Action')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -113,7 +115,7 @@ export default function Index({ categories }) {
                                         {canManageCategories ? (
                                             <div className="d-flex gap-2 flex-wrap">
                                                 <Button variant="secondary" onClick={() => startEdit(category)}>
-                                                    Edit
+                                                    {t('common.edit', 'Edit')}
                                                 </Button>
                                                 <Button
                                                     variant="danger"
@@ -123,11 +125,11 @@ export default function Index({ categories }) {
                                                         })
                                                     }
                                                 >
-                                                    Delete
+                                                    {t('common.delete', 'Delete')}
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <span className="text-muted small">Tidak ada akses</span>
+                                            <span className="text-muted small">{t('states.no_access', 'No access')}</span>
                                         )}
                                     </td>
                                 </tr>

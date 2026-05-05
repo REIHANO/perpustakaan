@@ -6,10 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Nav, Badge, Navbar, Button } from '@themesberg/react-bootstrap';
 import { hasPermission } from '../lib/permissions';
+import { useI18n } from '../lib/i18n';
 
 export default function Sidebar({ brand = 'Volt Library', brandHref = '/', navigation = [] }) {
     const { auth } = usePage().props;
     const { url } = usePage();
+    const { t } = useI18n();
     const permissions = auth?.user?.permissions || [];
     const isSuperAdmin = auth?.user?.role === 'super-admin';
     const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 768 : true;
@@ -84,8 +86,8 @@ export default function Sidebar({ brand = 'Volt Library', brandHref = '/', navig
                     <div className="sidebar-inner px-4 py-4">
                         <div className="d-flex align-items-center justify-content-between pb-4 d-md-none">
                             <div>
-                                <div className="fw-bold text-uppercase text-primary small">Perpustakaan</div>
-                                <h5 className="mb-0">{auth?.user?.name || 'Guest'}</h5>
+                                <div className="fw-bold text-uppercase text-primary small">{t('brand', 'Perpustakaan')}</div>
+                                <h5 className="mb-0">{auth?.user?.name || t('labels.account', 'Guest')}</h5>
                             </div>
                             <div className="collapse-close" style={{ cursor: 'pointer' }} onClick={() => setShow(false)}>
                                 <FontAwesomeIcon icon={faTimes} />

@@ -9,9 +9,11 @@ import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
 import Input from '../../../Components/Input';
 import { formatDate } from '../../../lib/format';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ members, books, borrowings, canSetFine }) {
     const [fineInputs, setFineInputs] = useState({});
+    const { t } = useI18n();
 
     const form = useForm({
         user_id: '',
@@ -40,24 +42,24 @@ export default function Index({ members, books, borrowings, canSetFine }) {
 
     return (
         <AdminLayout
-            title="Circulation"
-            subtitle="Kelola peminjaman dan pengembalian dari sisi admin."
+            title={t('nav.circulation', 'Circulation')}
+            subtitle={t('circulation.subtitle', 'Manage borrowings and returns from the admin side.')}
         >
-            <Head title="Admin Circulation" />
+            <Head title={t('nav.circulation', 'Circulation')} />
 
             <div className="rounded-4 border bg-white shadow-sm p-4 mb-4">
                 <div className="d-flex flex-wrap align-items-start justify-content-between gap-3">
                     <div>
-                        <p className="text-sm uppercase tracking-[0.2em] text-muted mb-2">Circulation Overview</p>
-                        <h2 className="h4 mb-2 text-dark">Peminjaman, pengembalian, dan denda</h2>
-                        <p className="mb-0 text-muted">Gunakan halaman ini untuk memproses transaksi manual dari sisi admin.</p>
+                        <p className="text-sm uppercase tracking-[0.2em] text-muted mb-2">{t('circulation.overview', 'Circulation Overview')}</p>
+                        <h2 className="h4 mb-2 text-dark">{t('circulation.heading', 'Borrowings, returns, and fines')}</h2>
+                        <p className="mb-0 text-muted">{t('circulation.description', 'Use this page to process manual transactions from the admin side.')}</p>
                     </div>
                     <div className="d-flex flex-wrap align-items-center gap-2">
-                        <Badge variant="info">Manage Circulation</Badge>
+                        <Badge variant="info">{t('nav.circulation', 'Circulation')}</Badge>
                         {canSetFine ? (
-                            <Badge variant="success">Set Fine Enabled</Badge>
+                            <Badge variant="success">{t('circulation.set_fine_enabled', 'Set Fine Enabled')}</Badge>
                         ) : (
-                            <Badge variant="neutral">Set Fine Disabled</Badge>
+                            <Badge variant="neutral">{t('circulation.set_fine_disabled', 'Set Fine Disabled')}</Badge>
                         )}
                     </div>
                 </div>
@@ -66,17 +68,17 @@ export default function Index({ members, books, borrowings, canSetFine }) {
             <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
                 <FormCard
                     className="h-100"
-                    title="Peminjaman manual"
-                    subtitle="Proses transaksi peminjaman dari admin."
+                    title={t('circulation.manual_loan', 'Manual borrowing')}
+                    subtitle={t('circulation.manual_loan_subtitle', 'Process borrowing transactions from admin.')}
                 >
                     <form onSubmit={submit} className="d-grid gap-3">
                         <Select
-                            label="Member"
+                            label={t('labels.member', 'Member')}
                             value={form.data.user_id}
                             onChange={(e) => form.setData('user_id', e.target.value)}
                             error={form.errors.user_id}
                         >
-                            <option value="">Pilih member</option>
+                            <option value="">{t('circulation.select_member', 'Select member')}</option>
                             {members.map((member) => (
                                 <option key={member.id} value={member.id}>
                                     {member.name} - {member.email}
@@ -85,12 +87,12 @@ export default function Index({ members, books, borrowings, canSetFine }) {
                         </Select>
 
                         <Select
-                            label="Buku"
+                            label={t('labels.book', 'Book')}
                             value={form.data.book_id}
                             onChange={(e) => form.setData('book_id', e.target.value)}
                             error={form.errors.book_id}
                         >
-                            <option value="">Pilih buku</option>
+                            <option value="">{t('circulation.select_book', 'Select book')}</option>
                             {books.map((book) => (
                                 <option key={book.id} value={book.id}>
                                     {book.title} ({book.category?.name}) - stok {book.stock}
@@ -99,22 +101,22 @@ export default function Index({ members, books, borrowings, canSetFine }) {
                         </Select>
 
                         <Button type="submit" disabled={form.processing}>
-                            Proses Peminjaman
+                            {t('circulation.process_loan', 'Process Borrowing')}
                         </Button>
                     </form>
                 </FormCard>
 
-                <Table title="Transaksi Terbaru" subtitle="Peminjaman yang sedang berjalan maupun selesai">
+                <Table title={t('circulation.latest_transactions', 'Latest Transactions')} subtitle={t('circulation.latest_transactions_subtitle', 'Borrowings that are ongoing or finished')}>
                     <table className="table table-hover align-middle mb-0">
                         <thead className="table-light">
                             <tr>
-                                <th>Member</th>
-                                <th>Buku</th>
-                                <th>Status</th>
-                                <th>Pinjam</th>
-                                <th>Jatuh Tempo</th>
-                                {canSetFine ? <th>Denda Manual</th> : null}
-                                <th>Aksi</th>
+                                <th>{t('labels.member', 'Member')}</th>
+                                <th>{t('labels.book', 'Book')}</th>
+                                <th>{t('labels.status', 'Status')}</th>
+                                <th>{t('labels.borrow_date', 'Borrow Date')}</th>
+                                <th>{t('labels.due_date', 'Due Date')}</th>
+                                {canSetFine ? <th>{t('labels.fine', 'Fine')}</th> : null}
+                                <th>{t('labels.action', 'Action')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -137,7 +139,7 @@ export default function Index({ members, books, borrowings, canSetFine }) {
                                                             : 'warning'
                                             }
                                         >
-                                            {borrowing.status}
+                                            {t(`states.${borrowing.status}`, borrowing.status)}
                                         </Badge>
                                     </td>
                                     <td>{formatDate(borrowing.borrow_date)}</td>
@@ -164,7 +166,7 @@ export default function Index({ members, books, borrowings, canSetFine }) {
                                                 variant="secondary"
                                                 onClick={() => submitReturn(borrowing.id)}
                                             >
-                                                {canSetFine ? 'Return + Fine' : 'Return'}
+                                                {canSetFine ? t('circulation.return_with_fine', 'Return + Fine') : t('actions.return', 'Return')}
                                             </Button>
                                         ) : null}
                                     </td>

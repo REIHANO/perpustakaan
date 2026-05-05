@@ -3,10 +3,13 @@ import { Link, useForm, usePage } from '@inertiajs/react';
 import { Navbar, Container, Nav, Form, InputGroup, Dropdown, Image, Button } from '@themesberg/react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faSearch, faSignOutAlt, faUserCircle, faCog } from '@fortawesome/free-solid-svg-icons';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useI18n } from '../lib/i18n';
 
 export default function TopNavbar({ title = 'Dashboard' }) {
     const { auth } = usePage().props;
     const form = useForm({ query: '' });
+    const { t } = useI18n();
     const permissions = auth?.user?.permissions || [];
     const isSuperAdmin = auth?.user?.role === 'super-admin';
     const isAdminLike =
@@ -24,7 +27,7 @@ export default function TopNavbar({ title = 'Dashboard' }) {
                 <div className="d-flex justify-content-between w-100 align-items-center flex-wrap gap-3">
                     <div>
                         <h4 className="mb-0 text-dark">{title}</h4>
-                        <small className="text-muted">Sistem Informasi Perpustakaan</small>
+                        <small className="text-muted">{t('app_name', 'Library Information System')}</small>
                     </div>
 
                     <div className="d-flex align-items-center gap-3">
@@ -35,12 +38,14 @@ export default function TopNavbar({ title = 'Dashboard' }) {
                                 </InputGroup.Text>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Search"
+                                    placeholder={t('common.search', 'Search')}
                                     value={form.data.query}
                                     onChange={(e) => form.setData('query', e.target.value)}
                                 />
                             </InputGroup>
                         </Form>
+
+                        <LanguageSwitcher compact />
 
                         <Dropdown as={Nav.Item}>
                             <Dropdown.Toggle as={Nav.Link} className="icon-notifications me-lg-3">
@@ -50,9 +55,9 @@ export default function TopNavbar({ title = 'Dashboard' }) {
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="dashboard-dropdown notifications-dropdown dropdown-menu-lg dropdown-menu-center mt-2 py-0">
                                 <div className="px-3 py-2 border-bottom">
-                                    <strong>Notifications</strong>
+                                    <strong>{t('common.notifications', 'Notifications')}</strong>
                                 </div>
-                                <div className="px-3 py-4 text-muted small">Tidak ada notifikasi baru.</div>
+                                <div className="px-3 py-4 text-muted small">{t('common.no_notifications', 'No new notifications.')}</div>
                             </Dropdown.Menu>
                         </Dropdown>
 
@@ -63,22 +68,22 @@ export default function TopNavbar({ title = 'Dashboard' }) {
                                         {auth?.user?.name?.[0] || 'U'}
                                     </div>
                                     <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block">
-                                        <span className="mb-0 font-small fw-bold">{auth?.user?.name || 'User'}</span>
+                                        <span className="mb-0 font-small fw-bold">{auth?.user?.name || t('labels.account', 'User')}</span>
                                     </div>
                                 </div>
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="user-dropdown dropdown-menu-right mt-2">
                                 <Dropdown.Item as={Link} href={profileHref} className="fw-bold">
                                     <FontAwesomeIcon icon={faUserCircle} className="me-2" />
-                                    {isSuperAdmin ? 'Manage Users' : 'Profile'}
+                                    {isSuperAdmin ? t('nav.users', 'Users') : t('common.profile', 'Profile')}
                                 </Dropdown.Item>
                                 <Dropdown.Item as={Link} href={isSuperAdmin ? '/super-admin/permissions' : profileHref} className="fw-bold">
                                     <FontAwesomeIcon icon={faCog} className="me-2" />
-                                    {isSuperAdmin ? 'Permissions' : 'Settings'}
+                                    {isSuperAdmin ? t('nav.permissions', 'Permissions') : t('common.settings', 'Settings')}
                                 </Dropdown.Item>
                                 <Dropdown.Divider />
                                 <Dropdown.Item as={Link} href="/logout" method="post" className="fw-bold text-danger">
-                                    <FontAwesomeIcon icon={faSignOutAlt} className="me-2" /> Logout
+                                    <FontAwesomeIcon icon={faSignOutAlt} className="me-2" /> {t('common.logout', 'Logout')}
                                 </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>

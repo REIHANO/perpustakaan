@@ -6,46 +6,49 @@ import StatCard from '../../Components/StatCard';
 import Table from '../../Components/Table';
 import Badge from '../../Components/Badge';
 import { formatDate } from '../../lib/format';
+import { useI18n } from '../../lib/i18n';
 
 export default function Dashboard({ stats, recentBorrowings, lowStockBooks }) {
+    const { t } = useI18n();
+
     return (
         <AdminLayout
-            title="Dashboard Admin"
-            subtitle="Pantau kondisi perpustakaan, stok buku, dan transaksi aktif secara ringkas."
+            title={t('dashboard.admin', 'Dashboard Admin')}
+            subtitle={t('dashboard.admin_subtitle', 'Monitor library conditions, stock, and active transactions at a glance.')}
         >
-            <Head title="Admin Dashboard" />
+            <Head title={t('dashboard.admin', 'Admin Dashboard')} />
 
             <Row className="g-4">
                 <Col md={6} xl={4}>
-                    <StatCard label="Total Buku" value={stats.books} icon="bi-book" />
+                    <StatCard label={t('labels.books', 'Books')} value={stats.books} icon="bi-book" />
                 </Col>
                 <Col md={6} xl={4}>
-                    <StatCard label="Kategori" value={stats.categories} icon="bi-tags" variant="info" />
+                    <StatCard label={t('labels.categories', 'Categories')} value={stats.categories} icon="bi-tags" variant="info" />
                 </Col>
                 <Col md={6} xl={4}>
-                    <StatCard label="Member" value={stats.members} icon="bi-people" variant="warning" />
+                    <StatCard label={t('labels.members', 'Members')} value={stats.members} icon="bi-people" variant="warning" />
                 </Col>
                 <Col md={6} xl={4}>
-                    <StatCard label="Peminjaman Aktif" value={stats.activeBorrowings} icon="bi-arrow-repeat" variant="primary" />
+                    <StatCard label={t('dashboard.member_active_borrowings', 'Active Borrowings')} value={stats.activeBorrowings} icon="bi-arrow-repeat" variant="primary" />
                 </Col>
                 <Col md={6} xl={4}>
-                    <StatCard label="Overdue" value={stats.overdue} icon="bi-exclamation-triangle" variant="danger" />
+                    <StatCard label={t('states.overdue', 'Overdue')} value={stats.overdue} icon="bi-exclamation-triangle" variant="danger" />
                 </Col>
                 <Col md={6} xl={4}>
-                    <StatCard label="Total Peminjaman" value={stats.borrowings} icon="bi-clipboard-data" />
+                    <StatCard label={t('reports.total_borrowings', 'Total Borrowings')} value={stats.borrowings} icon="bi-clipboard-data" />
                 </Col>
             </Row>
 
             <Row className="g-4 mt-1">
                 <Col xl={8}>
-                    <Table title="Peminjaman Terbaru" subtitle="Aktivitas terakhir dari sistem">
+                    <Table title={t('admin.latest_borrowings', 'Latest Borrowings')} subtitle={t('admin.latest_borrowings_subtitle', 'Latest activity from the system')}>
                         <table className="table table-hover align-middle mb-0">
                             <thead className="table-light">
                                 <tr>
-                                    <th>Member</th>
-                                    <th>Buku</th>
-                                    <th>Status</th>
-                                    <th>Tanggal</th>
+                                    <th>{t('labels.member', 'Member')}</th>
+                                    <th>{t('labels.book', 'Book')}</th>
+                                    <th>{t('labels.status', 'Status')}</th>
+                                    <th>{t('labels.date', 'Date')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -66,7 +69,7 @@ export default function Dashboard({ stats, recentBorrowings, lowStockBooks }) {
                                                           : 'warning'
                                                 }
                                             >
-                                                {item.status}
+                                                {t(`states.${item.status}`, item.status)}
                                             </Badge>
                                         </td>
                                         <td>{formatDate(item.borrow_date)}</td>
@@ -80,8 +83,8 @@ export default function Dashboard({ stats, recentBorrowings, lowStockBooks }) {
                 <Col xl={4}>
                     <Card className="border-0 shadow-sm h-100">
                         <Card.Header className="bg-white border-bottom">
-                            <h5 className="mb-1">Stok Menipis</h5>
-                            <p className="mb-0 text-muted">Buku yang harus dipantau</p>
+                            <h5 className="mb-1">{t('admin.low_stock', 'Low Stock')}</h5>
+                            <p className="mb-0 text-muted">{t('admin.low_stock_subtitle', 'Books that should be monitored.')}</p>
                         </Card.Header>
                         <Card.Body className="p-0">
                             <div className="p-3 p-md-4">
@@ -93,15 +96,15 @@ export default function Dashboard({ stats, recentBorrowings, lowStockBooks }) {
                                                 <div className="small text-muted">{book.category?.name}</div>
                                                 <div className="d-flex align-items-center justify-content-between mt-3 gap-2">
                                                     <Badge variant={book.is_available ? 'success' : 'danger'}>
-                                                        {book.is_available ? 'Available' : 'Out of stock'}
+                                                        {book.is_available ? t('states.available', 'Available') : t('states.out_of_stock', 'Out of stock')}
                                                     </Badge>
-                                                    <span className="small text-muted">Sisa {book.stock}</span>
+                                                    <span className="small text-muted">{t('labels.stock', 'Stock')} {book.stock}</span>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="text-muted">Tidak ada buku dengan stok menipis.</div>
+                                    <div className="text-muted">{t('admin.no_low_stock', 'No low stock books found.')}</div>
                                 )}
                             </div>
                         </Card.Body>
@@ -109,14 +112,14 @@ export default function Dashboard({ stats, recentBorrowings, lowStockBooks }) {
 
                     <Card className="border-0 shadow-sm mt-4">
                         <Card.Body className="p-4">
-                            <h5 className="mb-2">Akses Cepat</h5>
-                            <p className="text-muted mb-4">Langsung ke modul admin yang paling sering dipakai.</p>
+                            <h5 className="mb-2">{t('common.quick_access', 'Quick Access')}</h5>
+                            <p className="text-muted mb-4">{t('admin.quick_access_subtitle', 'Jump directly to the most used admin modules.')}</p>
                             <div className="d-grid gap-2">
                                 <Link className="btn btn-primary" href="/admin/books">
-                                    Kelola Buku
+                                    {t('nav.books', 'Books')}
                                 </Link>
                                 <Link className="btn btn-outline-primary" href="/admin/circulation">
-                                    Peminjaman
+                                    {t('nav.circulation', 'Circulation')}
                                 </Link>
                             </div>
                         </Card.Body>

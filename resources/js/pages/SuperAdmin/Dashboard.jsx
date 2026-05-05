@@ -4,11 +4,14 @@ import { Card, Row, Col } from '@themesberg/react-bootstrap';
 import SuperAdminLayout from '../../Layouts/SuperAdminLayout';
 import StatCard from '../../Components/StatCard';
 import Badge from '../../Components/Badge';
+import { useI18n } from '../../lib/i18n';
 
 export default function Dashboard({ stats, rolesSummary }) {
+    const { t } = useI18n();
+
     return (
-        <SuperAdminLayout title="Super Admin Dashboard">
-            <Head title="Super Admin Dashboard" />
+        <SuperAdminLayout title={t('dashboard.super_admin', 'Super Admin Dashboard')}>
+            <Head title={t('dashboard.super_admin', 'Super Admin Dashboard')} />
 
             <Row className="g-4">
                 <Col md={6} xl={4}>
@@ -38,8 +41,8 @@ export default function Dashboard({ stats, rolesSummary }) {
                 <Col xl={12}>
                     <Card className="border-0 shadow-sm">
                         <Card.Header className="bg-white border-bottom">
-                            <h5 className="mb-1">Ringkasan Role</h5>
-                            <p className="mb-0 text-muted">Distribusi user dan permission per role.</p>
+                            <h5 className="mb-1">{t('super_admin.role_summary', 'Role Summary')}</h5>
+                            <p className="mb-0 text-muted">{t('super_admin.role_summary_subtitle', 'User and permission distribution per role.')}</p>
                         </Card.Header>
                         <Card.Body>
                             <Row className="g-3">

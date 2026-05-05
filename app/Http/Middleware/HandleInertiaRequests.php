@@ -16,7 +16,16 @@ class HandleInertiaRequests extends Middleware
 
     public function share(Request $request): array
     {
+        $locale = app()->getLocale();
+
         return array_merge(parent::share($request), [
+            'locale' => $locale,
+            'supportedLocales' => array_map(
+                fn (array $config, string $code) => array_merge(['code' => $code], $config),
+                config('i18n.supported_locales', []),
+                array_keys(config('i18n.supported_locales', []))
+            ),
+            'translations' => fn () => require lang_path($locale . '/ui.php'),
             'auth' => [
                 'user' => fn () => $request->user()
                     ? array_merge(

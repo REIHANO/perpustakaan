@@ -3,6 +3,7 @@ import { Head, useForm, Link } from '@inertiajs/react';
 import AuthLayout from '../../Layouts/AuthLayout';
 import Button from '../../Components/Button';
 import Input from '../../Components/Input';
+import { useI18n } from '../../lib/i18n';
 
 export default function Register() {
     const form = useForm({
@@ -16,22 +17,23 @@ export default function Register() {
         e.preventDefault();
         form.post('/register');
     };
+    const { t } = useI18n();
 
     return (
         <AuthLayout
-            title="Gabung sebagai member"
-            subtitle="Akses katalog buku, riwayat peminjaman, reservasi, dan profil dalam antarmuka SPA yang ringan."
+            title={t('auth.register_title', 'Gabung sebagai member')}
+            subtitle={t('auth.register_subtitle', 'Akses katalog buku, riwayat peminjaman, reservasi, dan profil dalam antarmuka SPA yang ringan.')}
         >
-            <Head title="Register" />
+            <Head title={t('common.register', 'Register')} />
 
             <form onSubmit={submit} className="space-y-5">
                 <div>
-                    <h2 className="h3 mb-2 text-dark">Register</h2>
-                    <p className="mb-0 text-muted">Akun baru otomatis dibuat sebagai member.</p>
+                    <h2 className="h3 mb-2 text-dark">{t('auth.register_heading', 'Register')}</h2>
+                    <p className="mb-0 text-muted">{t('auth.register_hint', 'Akun baru otomatis dibuat sebagai member.')}</p>
                 </div>
 
                 <Input
-                    label="Nama"
+                    label={t('auth.name', 'Nama')}
                     value={form.data.name}
                     onChange={(e) => form.setData('name', e.target.value)}
                     error={form.errors.name}
@@ -39,7 +41,7 @@ export default function Register() {
                 />
 
                 <Input
-                    label="Email"
+                    label={t('auth.email', 'Email')}
                     type="email"
                     value={form.data.email}
                     onChange={(e) => form.setData('email', e.target.value)}
@@ -48,7 +50,7 @@ export default function Register() {
                 />
 
                 <Input
-                    label="Password"
+                    label={t('auth.password', 'Password')}
                     type="password"
                     value={form.data.password}
                     onChange={(e) => form.setData('password', e.target.value)}
@@ -57,7 +59,7 @@ export default function Register() {
                 />
 
                 <Input
-                    label="Konfirmasi Password"
+                    label={t('auth.password_confirm', 'Konfirmasi Password')}
                     type="password"
                     value={form.data.password_confirmation}
                     onChange={(e) => form.setData('password_confirmation', e.target.value)}
@@ -66,13 +68,13 @@ export default function Register() {
                 />
 
                 <Button type="submit" className="w-100" disabled={form.processing}>
-                    {form.processing ? 'Mendaftar...' : 'Daftar'}
+                    {form.processing ? 'Mendaftar...' : t('auth.register_button', 'Daftar')}
                 </Button>
 
                 <p className="text-center text-sm text-muted mb-0">
                     Sudah punya akun?{' '}
                     <Link href="/login" className="fw-semibold text-primary">
-                        Login
+                        {t('auth.login_link', 'Login')}
                     </Link>
                 </p>
             </form>

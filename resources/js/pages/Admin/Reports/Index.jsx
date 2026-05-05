@@ -5,29 +5,31 @@ import StatCard from '../../../Components/StatCard';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
 import { formatNumber, formatCurrency } from '../../../lib/format';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ summary, mostBorrowedBooks, categoryCounts, overdueBorrowings }) {
+    const { t } = useI18n();
     return (
         <AdminLayout
-            title="Reports"
-            subtitle="Ringkasan statistik dan kondisi perpustakaan."
+            title={t('nav.reports', 'Reports')}
+            subtitle={t('reports.subtitle', 'Summary statistics and library conditions.')}
         >
-            <Head title="Admin Reports" />
+            <Head title={t('nav.reports', 'Reports')} />
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <StatCard label="Total Peminjaman" value={summary.totalBorrowings} icon="bi-clipboard-data" />
-                <StatCard label="Aktif" value={summary.activeBorrowings} icon="bi-arrow-repeat" variant="info" />
-                <StatCard label="Returned" value={summary.returnedBorrowings} icon="bi-check2-circle" variant="success" />
-                <StatCard label="Total Denda" value={formatCurrency(summary.totalFine)} icon="bi-cash-coin" variant="warning" />
+                <StatCard label={t('reports.total_borrowings', 'Total Borrowings')} value={summary.totalBorrowings} icon="bi-clipboard-data" />
+                <StatCard label={t('states.active', 'Active')} value={summary.activeBorrowings} icon="bi-arrow-repeat" variant="info" />
+                <StatCard label={t('states.returned', 'Returned')} value={summary.returnedBorrowings} icon="bi-check2-circle" variant="success" />
+                <StatCard label={t('reports.total_fine', 'Total Fine')} value={formatCurrency(summary.totalFine)} icon="bi-cash-coin" variant="warning" />
             </div>
 
             <div className="mt-6 grid gap-3 xl:grid-cols-2">
-                <Table title="Buku Terpopuler" subtitle="Berdasarkan jumlah transaksi">
+                <Table title={t('reports.popular_books', 'Most Borrowed Books')} subtitle={t('reports.popular_books_subtitle', 'Based on the number of transactions')}>
                     <table className="min-w-full divide-y divide-white/10">
                         <thead className="bg-white/5">
                             <tr className="text-left text-xs uppercase tracking-[0.2em] text-slate-400">
-                                <th className="px-6 py-4">Buku</th>
-                                <th className="px-6 py-4">Peminjaman</th>
+                                <th className="px-6 py-4">{t('labels.book', 'Book')}</th>
+                                <th className="px-6 py-4">{t('labels.borrowings', 'Borrowings')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/10">
@@ -46,12 +48,12 @@ export default function Index({ summary, mostBorrowedBooks, categoryCounts, over
                     </table>
                 </Table>
 
-                <Table title="Kategori Buku" subtitle="Distribusi koleksi">
+                <Table title={t('reports.category_distribution', 'Book Categories')} subtitle={t('reports.category_distribution_subtitle', 'Collection distribution')}>
                     <table className="min-w-full divide-y divide-white/10">
                         <thead className="bg-white/5">
                             <tr className="text-left text-xs uppercase tracking-[0.2em] text-slate-400">
-                                <th className="px-6 py-4">Kategori</th>
-                                <th className="px-6 py-4">Jumlah Buku</th>
+                                <th className="px-6 py-4">{t('labels.category', 'Category')}</th>
+                                <th className="px-6 py-4">{t('reports.book_total', 'Book Total')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/10">
@@ -67,14 +69,14 @@ export default function Index({ summary, mostBorrowedBooks, categoryCounts, over
             </div>
 
             <div className="mt-6">
-                <Table title="Overdue Borrowings" subtitle="Transaksi yang melewati batas pinjam">
+                <Table title={t('reports.overdue_borrowings', 'Overdue Borrowings')} subtitle={t('reports.overdue_borrowings_subtitle', 'Transactions that have passed their due date')}>
                     <table className="min-w-full divide-y divide-white/10">
                         <thead className="bg-white/5">
                             <tr className="text-left text-xs uppercase tracking-[0.2em] text-slate-400">
-                                <th className="px-6 py-4">Member</th>
-                                <th className="px-6 py-4">Buku</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4">Denda</th>
+                                <th className="px-6 py-4">{t('labels.member', 'Member')}</th>
+                                <th className="px-6 py-4">{t('labels.book', 'Book')}</th>
+                                <th className="px-6 py-4">{t('labels.status', 'Status')}</th>
+                                <th className="px-6 py-4">{t('labels.fine', 'Fine')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/10">
@@ -83,7 +85,7 @@ export default function Index({ summary, mostBorrowedBooks, categoryCounts, over
                                     <td className="px-6 py-4">{borrowing.user?.name}</td>
                                     <td className="px-6 py-4">{borrowing.book?.title}</td>
                                     <td className="px-6 py-4">
-                                        <Badge variant="danger">{borrowing.status}</Badge>
+                                        <Badge variant="danger">{t('states.overdue', 'Overdue')}</Badge>
                                     </td>
                                     <td className="px-6 py-4">{formatCurrency(borrowing.fine_amount)}</td>
                                 </tr>

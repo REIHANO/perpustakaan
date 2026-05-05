@@ -7,6 +7,7 @@ import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
+import { useI18n } from '../../../lib/i18n';
 
 const CIRCULATION_GROUP = [
     'manage-circulation',
@@ -14,6 +15,7 @@ const CIRCULATION_GROUP = [
 ];
 
 function RolePermissionCard({ role, permissions, selectedIds }) {
+    const { t } = useI18n();
     const form = useForm({
         permission_ids: selectedIds,
     });
@@ -26,10 +28,10 @@ function RolePermissionCard({ role, permissions, selectedIds }) {
     };
 
     return (
-        <Card className="border-0 shadow-sm h-100">
+            <Card className="border-0 shadow-sm h-100">
             <Card.Header className="bg-white border-bottom p-4 p-lg-5">
                 <h5 className="mb-1 text-capitalize">{role}</h5>
-                <p className="mb-0 text-muted">Atur permission untuk role ini.</p>
+                <p className="mb-0 text-muted">{t('permissions.role_subtitle', 'Manage permissions for this role.')}</p>
             </Card.Header>
             <Card.Body className="p-4 p-lg-6">
                 <form onSubmit={submit} className="d-grid gap-3">
@@ -37,10 +39,10 @@ function RolePermissionCard({ role, permissions, selectedIds }) {
                         <div className="rounded-3 border bg-light p-3">
                             <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
                                 <div>
-                                    <div className="fw-semibold text-dark">Circulation + Fine</div>
-                                    <div className="small text-muted">Permission untuk sirkulasi dan pengaturan denda.</div>
+                                    <div className="fw-semibold text-dark">{t('permissions.group_title', 'Circulation + Fine')}</div>
+                                    <div className="small text-muted">{t('permissions.group_subtitle', 'Permissions for circulation and fine settings.')}</div>
                                 </div>
-                                <Badge variant="info">Grouped</Badge>
+                                <Badge variant="info">{t('states.grouped', 'Grouped')}</Badge>
                             </div>
 
                             {permissions
@@ -81,7 +83,7 @@ function RolePermissionCard({ role, permissions, selectedIds }) {
                             ))}
                     </div>
                     <Button type="submit" disabled={form.processing}>
-                        Simpan Permission
+                        {t('common.save', 'Save')}
                     </Button>
                 </form>
             </Card.Body>
@@ -92,6 +94,7 @@ function RolePermissionCard({ role, permissions, selectedIds }) {
 export default function Index({ permissions, roles, rolePermissions }) {
     const [editingPermission, setEditingPermission] = useState(null);
     const permissionRows = useMemo(() => permissions ?? [], [permissions]);
+    const { t } = useI18n();
 
     const form = useForm({
         name: '',
@@ -130,56 +133,56 @@ export default function Index({ permissions, roles, rolePermissions }) {
     };
 
     return (
-        <SuperAdminLayout title="Permission Manager">
-            <Head title="Super Admin Permissions" />
+        <SuperAdminLayout title={t('nav.permissions', 'Permissions')}>
+            <Head title={t('nav.permissions', 'Permissions')} />
 
             <Row className="g-4">
                 <Col xl={4}>
                     <FormCard
-                        title={editingPermission ? 'Edit Permission' : 'Tambah Permission'}
-                        subtitle={editingPermission ? 'Perbarui permission yang sudah dipilih dari tabel.' : 'Buat permission baru untuk dipakai role.'}
+                        title={editingPermission ? t('common.edit', 'Edit') : t('actions.add', 'Add')}
+                        subtitle={editingPermission ? t('permissions.edit_subtitle', 'Update the permission selected from the table.') : t('permissions.create_subtitle', 'Create a new permission for roles.')}
                         action={editingPermission ? (
                             <Button variant="secondary" className="btn-sm" onClick={resetForm}>
-                                Batal Edit
+                                {t('common.cancel', 'Cancel')}
                             </Button>
                         ) : null}
                     >
                         <form onSubmit={submit} className="d-grid gap-3">
                             <Input
-                                label="Nama"
+                                label={t('labels.name', 'Name')}
                                 value={form.data.name}
                                 onChange={(e) => form.setData('name', e.target.value)}
                                 error={form.errors.name}
                             />
                             <Input
-                                label="Slug"
+                                label={t('labels.slug', 'Slug')}
                                 value={form.data.slug}
                                 onChange={(e) => form.setData('slug', e.target.value)}
                                 error={form.errors.slug}
-                                placeholder={editingPermission ? 'Slug wajib diisi saat edit' : 'opsional, otomatis dari nama'}
+                                placeholder={editingPermission ? t('permissions.slug_required', 'Slug is required when editing') : t('permissions.slug_auto', 'Optional, auto from name')}
                             />
                             <Input
-                                label="Deskripsi"
+                                label={t('labels.description', 'Description')}
                                 value={form.data.description}
                                 onChange={(e) => form.setData('description', e.target.value)}
                                 error={form.errors.description}
                             />
                             <Button type="submit" disabled={form.processing}>
-                                {editingPermission ? 'Update' : 'Simpan'}
+                                {editingPermission ? t('common.update', 'Update') : t('common.save', 'Save')}
                             </Button>
                         </form>
                     </FormCard>
                 </Col>
 
                 <Col xl={8}>
-                    <Table title="Daftar Permission" subtitle="Kelola permission yang tersedia di sistem">
+                    <Table title={t('nav.permissions', 'Permissions')} subtitle={t('permissions.subtitle', 'Manage permissions available in the system')}>
                         <table className="table table-hover align-middle mb-0">
                             <thead className="table-light">
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Slug</th>
-                                    <th>Deskripsi</th>
-                                    <th>Aksi</th>
+                                    <th>{t('labels.name', 'Name')}</th>
+                                    <th>{t('labels.slug', 'Slug')}</th>
+                                    <th>{t('labels.description', 'Description')}</th>
+                                    <th>{t('labels.action', 'Action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -187,10 +190,8 @@ export default function Index({ permissions, roles, rolePermissions }) {
                                     <td colSpan={4}>
                                         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                             <div>
-                                                <div className="fw-semibold text-dark">Circulation + Fine</div>
-                                                <div className="small text-muted">
-                                                    Grup permission yang mengatur peminjaman, pengembalian, dan denda.
-                                                </div>
+                                                <div className="fw-semibold text-dark">{t('permissions.group_title', 'Circulation + Fine')}</div>
+                                                <div className="small text-muted">{t('permissions.group_description', 'Grouped permissions that manage borrowing, returns, and fines.')}</div>
                                             </div>
                                             <Badge variant="primary">manage-circulation + set-fine</Badge>
                                         </div>
@@ -208,7 +209,7 @@ export default function Index({ permissions, roles, rolePermissions }) {
                                                     className="btn-sm"
                                                     onClick={() => startEdit(permission)}
                                                 >
-                                                    Edit
+                                                    {t('common.edit', 'Edit')}
                                                 </Button>
                                                 <Button
                                                     variant="danger"
@@ -221,7 +222,7 @@ export default function Index({ permissions, roles, rolePermissions }) {
                                                         router.delete(`/super-admin/permissions/${permission.id}`, { preserveScroll: true });
                                                     }}
                                                 >
-                                                    Hapus
+                                                    {t('common.delete', 'Delete')}
                                                 </Button>
                                             </div>
                                         </td>

@@ -5,27 +5,31 @@ import MemberLayout from '../../Layouts/MemberLayout';
 import StatCard from '../../Components/StatCard';
 import Badge from '../../Components/Badge';
 import { formatDate } from '../../lib/format';
+import { useI18n } from '../../lib/i18n';
 
 export default function Dashboard({ stats, activeBorrowings, notifications, recommendedBooks }) {
+    const { t } = useI18n();
+    const currency = (value) => `Rp${parseFloat(value || 0).toLocaleString('id-ID')}`;
+
     return (
         <MemberLayout
-            title="Member Dashboard"
-            subtitle="Pantau pinjaman aktif, notifikasi jatuh tempo, dan koleksi rekomendasi."
+            title={t('dashboard.member', 'Member Dashboard')}
+            subtitle={t('dashboard.member_subtitle', 'Track active borrowings, due notices, and recommended books.')}
         >
-            <Head title="Member Dashboard" />
+            <Head title={t('dashboard.member', 'Member Dashboard')} />
 
             <Row className="g-4">
                 <Col md={6} xl={3}>
-                    <StatCard label="Pinjaman Aktif" value={stats.activeBorrowings} icon="bi-arrow-repeat" />
+                    <StatCard label={t('dashboard.member_active_borrowings', 'Active Borrowings')} value={stats.activeBorrowings} icon="bi-arrow-repeat" />
                 </Col>
                 <Col md={6} xl={3}>
-                    <StatCard label="Riwayat" value={stats.historyCount} icon="bi-clock-history" variant="info" />
+                    <StatCard label={t('dashboard.member_history', 'History')} value={stats.historyCount} icon="bi-clock-history" variant="info" />
                 </Col>
                 <Col md={6} xl={3}>
-                    <StatCard label="Reservasi" value={stats.reservations} icon="bi-bookmark" variant="warning" />
+                    <StatCard label={t('dashboard.member_reservations', 'Reservations')} value={stats.reservations} icon="bi-bookmark" variant="warning" />
                 </Col>
                 <Col md={6} xl={3}>
-                    <StatCard label="Buku Tersedia" value={stats.availableBooks} icon="bi-book" variant="success" />
+                    <StatCard label={t('dashboard.member_available_books', 'Available Books')} value={stats.availableBooks} icon="bi-book" variant="success" />
                 </Col>
             </Row>
 
@@ -33,33 +37,33 @@ export default function Dashboard({ stats, activeBorrowings, notifications, reco
                 <Col xl={7}>
                     <Card className="border-0 shadow-sm h-100">
                         <Card.Header className="bg-white border-bottom">
-                            <h5 className="mb-1">Pinjaman Aktif</h5>
-                            <p className="mb-0 text-muted">Daftar pinjaman yang sedang berjalan.</p>
+                            <h5 className="mb-1">{t('dashboard.member_active_borrowings', 'Active Borrowings')}</h5>
+                            <p className="mb-0 text-muted">{t('dashboard.active_borrowings_description', 'A list of currently ongoing borrowings.')}</p>
                         </Card.Header>
                         <Card.Body>
                             <div className="d-grid gap-3">
                                 {activeBorrowings.length ? (
                                     activeBorrowings.map((item) => (
                                         <div key={item.id} className="rounded-3 border bg-light p-3">
-                                            <div className="d-flex align-items-start justify-content-between gap-3">
-                                                <div>
-                                                    <div className="fw-semibold text-dark">{item.book?.title}</div>
-                                                    <div className="small text-muted">{item.book?.category?.name}</div>
-                                                </div>
-                                                <Badge variant={item.is_overdue ? 'danger' : 'warning'}>
-                                                    {item.is_overdue ? 'Overdue' : 'Borrowed'}
-                                                </Badge>
+                                        <div className="d-flex align-items-start justify-content-between gap-3">
+                                            <div>
+                                                <div className="fw-semibold text-dark">{item.book?.title}</div>
+                                                <div className="small text-muted">{item.book?.category?.name}</div>
                                             </div>
-                                            <Row className="g-2 mt-3 small text-muted">
-                                                <Col sm={4}>Pinjam: {formatDate(item.borrow_date)}</Col>
-                                                <Col sm={4}>Tempo: {formatDate(item.due_date)}</Col>
-                                                <Col sm={4}>Denda: Rp{parseFloat(item.fine_amount || 0).toLocaleString('id-ID')}</Col>
-                                            </Row>
+                                            <Badge variant={item.is_overdue ? 'danger' : 'warning'}>
+                                                {item.is_overdue ? t('states.overdue', 'Overdue') : t('states.borrowed', 'Borrowed')}
+                                            </Badge>
                                         </div>
-                                    ))
-                                ) : (
-                                    <div className="text-muted">Belum ada pinjaman aktif.</div>
-                                )}
+                                        <Row className="g-2 mt-3 small text-muted">
+                                            <Col sm={4}>{t('labels.borrow_date', 'Borrow Date')}: {formatDate(item.borrow_date)}</Col>
+                                            <Col sm={4}>{t('labels.due_date', 'Due Date')}: {formatDate(item.due_date)}</Col>
+                                            <Col sm={4}>{t('labels.fine', 'Fine')}: {currency(item.fine_amount)}</Col>
+                                        </Row>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-muted">{t('dashboard.no_active_borrowings', 'No active borrowings yet.')}</div>
+                            )}
                             </div>
                         </Card.Body>
                     </Card>
@@ -68,8 +72,8 @@ export default function Dashboard({ stats, activeBorrowings, notifications, reco
                 <Col xl={5}>
                     <Card className="border-0 shadow-sm h-100">
                         <Card.Header className="bg-white border-bottom">
-                            <h5 className="mb-1">Notifikasi Jatuh Tempo</h5>
-                            <p className="mb-0 text-muted">Pengingat pinjaman yang perlu segera ditindaklanjuti.</p>
+                            <h5 className="mb-1">{t('dashboard.due_notifications', 'Due Date Notifications')}</h5>
+                            <p className="mb-0 text-muted">{t('dashboard.due_notifications_description', 'Reminders for borrowings that need attention soon.')}</p>
                         </Card.Header>
                         <Card.Body>
                             <div className="d-grid gap-3">
@@ -83,13 +87,13 @@ export default function Dashboard({ stats, activeBorrowings, notifications, reco
                                         >
                                             <div className="fw-semibold text-dark">{item.title}</div>
                                             <div className="small text-muted mt-1">
-                                                {item.isOverdue ? 'Sudah melewati jatuh tempo' : `${item.daysLeft} hari lagi`}
+                                                {item.isOverdue ? t('states.overdue', 'Overdue') : t('dashboard.due_in_days', ':days days left').replace(':days', item.daysLeft)}
                                             </div>
-                                            <div className="small text-muted mt-2">Due date: {item.dueDate}</div>
+                                            <div className="small text-muted mt-2">{t('labels.due_date', 'Due Date')}: {item.dueDate}</div>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-muted">Tidak ada notifikasi jatuh tempo.</div>
+                                    <div className="text-muted">{t('dashboard.no_due_notifications', 'No due date notifications.')}</div>
                                 )}
                             </div>
                         </Card.Body>
@@ -97,14 +101,14 @@ export default function Dashboard({ stats, activeBorrowings, notifications, reco
                 </Col>
             </Row>
 
-            <Card className="border-0 shadow-sm mt-4">
+                <Card className="border-0 shadow-sm mt-4">
                 <Card.Header className="bg-white border-bottom d-flex align-items-center justify-content-between">
                     <div>
-                        <h5 className="mb-1">Rekomendasi Buku</h5>
-                        <p className="mb-0 text-muted">Buku yang relevan untuk dipinjam berikutnya.</p>
+                        <h5 className="mb-1">{t('dashboard.recommended_books', 'Recommended Books')}</h5>
+                        <p className="mb-0 text-muted">{t('dashboard.recommended_books_description', 'Books relevant for your next borrow.')}</p>
                     </div>
                     <Link href="/member/catalog" className="btn btn-outline-primary btn-sm">
-                        Lihat katalog
+                        {t('dashboard.view_catalog', 'View catalog')}
                     </Link>
                 </Card.Header>
                 <Card.Body>
@@ -114,15 +118,15 @@ export default function Dashboard({ stats, activeBorrowings, notifications, reco
                                 <Link href={`/member/catalog/${book.id}`} className="text-decoration-none">
                                     <div className="rounded-3 border bg-light p-3 h-100">
                                         <div className="small text-primary text-uppercase fw-bold">
-                                            {book.category?.name}
+                                            {book.category?.name || t('labels.category', 'Category')}
                                         </div>
                                         <div className="fw-semibold text-dark mt-2">{book.title}</div>
                                         <div className="small text-muted mt-1">{book.author}</div>
                                         <div className="d-flex align-items-center justify-content-between mt-3 gap-2">
                                             <Badge variant={book.is_available ? 'success' : 'danger'}>
-                                                {book.is_available ? 'Available' : 'Empty'}
+                                                {book.is_available ? t('states.available', 'Available') : t('states.empty', 'Empty')}
                                             </Badge>
-                                            <span className="small text-muted">Stok {book.stock}</span>
+                                            <span className="small text-muted">{t('labels.stock', 'Stock')} {book.stock}</span>
                                         </div>
                                     </div>
                                 </Link>

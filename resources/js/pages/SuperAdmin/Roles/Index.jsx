@@ -7,6 +7,7 @@ import FormCard from '../../../Components/FormCard';
 import Input from '../../../Components/Input';
 import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
+import { useI18n } from '../../../lib/i18n';
 
 const CIRCULATION_SLUG = 'manage-circulation';
 const SET_FINE_SLUG = 'set-fine';
@@ -35,6 +36,7 @@ function normalizePermissionIds(permissionIds, circulationId, setFineId) {
 export default function Index({ roles, permissions }) {
     const [editingRole, setEditingRole] = useState(null);
     const permissionRows = useMemo(() => permissions ?? [], [permissions]);
+    const { t } = useI18n();
     const circulationPermission = permissionRows.find((permission) => permission.slug === CIRCULATION_SLUG);
     const setFinePermission = permissionRows.find((permission) => permission.slug === SET_FINE_SLUG);
 
@@ -104,10 +106,10 @@ export default function Index({ roles, permissions }) {
                 <div className="rounded-3 border bg-light p-3 ms-3">
                     <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
                         <div>
-                            <div className="fw-semibold text-dark">Circulation + Fine</div>
-                            <div className="small text-muted">Manage Circulation harus aktif sebelum Set Fine dipakai.</div>
+                            <div className="fw-semibold text-dark">{t('permissions.group_title', 'Circulation + Fine')}</div>
+                            <div className="small text-muted">{t('roles.fine_dependency', 'Manage Circulation must be active before Set Fine can be used.')}</div>
                         </div>
-                        <Badge variant="info">Grouped</Badge>
+                        <Badge variant="info">{t('states.grouped', 'Grouped')}</Badge>
                     </div>
 
                     <Form.Check
@@ -142,57 +144,57 @@ export default function Index({ roles, permissions }) {
         const hasSetFine = setFinePermission ? permissionIds.includes(setFinePermission.id) : false;
 
         if (hasCirculation && hasSetFine) {
-            return { variant: 'success', text: 'Bisa Set Denda' };
+            return { variant: 'success', text: t('roles.fine_access', 'Can set fine') };
         }
 
         if (hasCirculation) {
-            return { variant: 'warning', text: 'Circulation Only' };
+            return { variant: 'warning', text: t('roles.circulation_only', 'Circulation only') };
         }
 
-        return { variant: 'neutral', text: 'No Fine Access' };
+        return { variant: 'neutral', text: t('roles.no_fine_access', 'No fine access') };
     };
 
     return (
-        <SuperAdminLayout title="Role Manager">
-            <Head title="Super Admin Roles" />
+        <SuperAdminLayout title={t('nav.roles', 'Roles')}>
+            <Head title={t('nav.roles', 'Roles')} />
 
             <Row className="g-4">
                 <Col xl={4}>
                     <FormCard
-                        title={editingRole ? 'Edit Role' : 'Tambah Role Baru'}
-                        subtitle={editingRole ? 'Perbarui role yang sudah dipilih dari tabel.' : 'Buat role custom berdasarkan permission.'}
+                        title={editingRole ? t('common.edit', 'Edit') : t('actions.add', 'Add')}
+                        subtitle={editingRole ? t('roles.edit_subtitle', 'Update the role selected from the table.') : t('roles.create_subtitle', 'Create a custom role based on permissions.')}
                         action={editingRole ? (
                             <Button variant="secondary" className="btn-sm" onClick={resetForm}>
-                                Batal Edit
+                                {t('common.cancel', 'Cancel')}
                             </Button>
                         ) : null}
                     >
                         <form onSubmit={submit} className="d-grid gap-3">
                             <Input
-                                label="Nama Role"
+                                label={t('labels.name', 'Name')}
                                 value={form.data.name}
                                 onChange={(e) => form.setData('name', e.target.value)}
                                 error={form.errors.name}
                             />
                             {editingRole ? (
                                 <Input
-                                    label="Slug Role"
+                                    label={t('labels.slug', 'Slug')}
                                     value={form.data.slug}
                                     disabled
                                     readOnly
-                                    placeholder="Slug tidak dapat diubah saat edit"
+                                    placeholder={t('roles.slug_locked', 'Slug cannot be changed while editing')}
                                 />
                             ) : (
                                 <Input
-                                    label="Slug Role"
+                                    label={t('labels.slug', 'Slug')}
                                     value={form.data.slug}
                                     onChange={(e) => form.setData('slug', e.target.value)}
                                     error={form.errors.slug}
-                                    placeholder="opsional, otomatis dari nama"
+                                    placeholder={t('roles.slug_auto', 'Optional, auto from name')}
                                 />
                             )}
                             <Input
-                                label="Deskripsi"
+                                label={t('labels.description', 'Description')}
                                 value={form.data.description}
                                 onChange={(e) => form.setData('description', e.target.value)}
                                 error={form.errors.description}
@@ -205,23 +207,23 @@ export default function Index({ roles, permissions }) {
                             )}
 
                             <Button type="submit" disabled={form.processing}>
-                                {editingRole ? 'Update Role' : 'Simpan Role'}
+                                {editingRole ? t('common.update', 'Update') : t('common.save', 'Save')}
                             </Button>
                         </form>
                     </FormCard>
                 </Col>
 
                 <Col xl={8}>
-                    <Table title="Daftar Role" subtitle="Role sistem dan role custom yang tersedia">
+                    <Table title={t('nav.roles', 'Roles')} subtitle={t('roles.subtitle', 'System and custom roles available')}>
                         <table className="table table-hover align-middle mb-0">
                             <thead className="table-light">
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Slug</th>
-                                    <th>User</th>
-                                    <th>Denda</th>
-                                    <th>System</th>
-                                    <th>Aksi</th>
+                                    <th>{t('labels.name', 'Name')}</th>
+                                    <th>{t('labels.slug', 'Slug')}</th>
+                                    <th>{t('labels.members', 'Members')}</th>
+                                    <th>{t('labels.fine', 'Fine')}</th>
+                                    <th>{t('roles.system', 'System')}</th>
+                                    <th>{t('labels.action', 'Action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -238,7 +240,7 @@ export default function Index({ roles, permissions }) {
                                             <td>
                                                 <Badge variant={badge.variant}>{badge.text}</Badge>
                                             </td>
-                                            <td>{role.is_system ? 'Yes' : 'No'}</td>
+                                            <td>{role.is_system ? t('states.yes', 'Yes') : t('states.no', 'No')}</td>
                                             <td>
                                                 <div className="d-flex gap-2 flex-wrap">
                                                     <Button
@@ -246,7 +248,7 @@ export default function Index({ roles, permissions }) {
                                                         className="btn-sm"
                                                         onClick={() => startEdit(role)}
                                                     >
-                                                        Edit
+                                                        {t('common.edit', 'Edit')}
                                                     </Button>
                                                     <Button
                                                         variant="danger"
@@ -260,7 +262,7 @@ export default function Index({ roles, permissions }) {
                                                         }}
                                                         disabled={role.is_system}
                                                     >
-                                                        Hapus
+                                                        {t('common.delete', 'Delete')}
                                                     </Button>
                                                 </div>
                                             </td>

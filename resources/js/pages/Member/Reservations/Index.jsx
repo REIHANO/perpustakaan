@@ -5,22 +5,25 @@ import Table from '../../../Components/Table';
 import Badge from '../../../Components/Badge';
 import Button from '../../../Components/Button';
 import { formatDate } from '../../../lib/format';
+import { useI18n } from '../../../lib/i18n';
 
 export default function Index({ reservations }) {
+    const { t } = useI18n();
+
     return (
         <MemberLayout
-            title="Reservations"
-            subtitle="Daftar booking buku yang belum diubah menjadi peminjaman."
+            title={t('nav.reservations', 'Reservations')}
+            subtitle={t('reservations.subtitle', 'Book reservations that have not been converted to borrowings yet.')}
         >
-            <Head title="Reservations" />
+            <Head title={t('nav.reservations', 'Reservations')} />
 
-            <Table title="Reservasi Aktif" subtitle="Booking yang sedang menunggu proses pinjam">
+            <Table title={t('reservations.active', 'Active Reservations')} subtitle={t('reservations.subtitle_2', 'Bookings waiting to be borrowed')}>
                 <table className="min-w-full divide-y divide-white/10">
                     <thead className="bg-white/5">
                         <tr className="text-left text-xs uppercase tracking-[0.2em] text-slate-400">
-                            <th className="px-6 py-4">Buku</th>
-                            <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4">Dibuat</th>
+                            <th className="px-6 py-4">{t('labels.book', 'Book')}</th>
+                            <th className="px-6 py-4">{t('labels.status', 'Status')}</th>
+                            <th className="px-6 py-4">{t('labels.date', 'Date')}</th>
                             <th className="px-6 py-4" />
                         </tr>
                     </thead>
@@ -32,7 +35,7 @@ export default function Index({ reservations }) {
                                     <div className="text-xs text-slate-500">{item.book?.category?.name}</div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Badge variant="info">{item.status}</Badge>
+                                    <Badge variant="info">{t(`states.${item.status}`, item.status)}</Badge>
                                 </td>
                                 <td className="px-6 py-4">{formatDate(item.created_at)}</td>
                                 <td className="px-6 py-4">
@@ -46,7 +49,7 @@ export default function Index({ reservations }) {
                                             )
                                         }
                                     >
-                                        Convert to Borrow
+                                        {t('actions.convert', 'Convert')}
                                     </Button>
                                 </td>
                             </tr>
